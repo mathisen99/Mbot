@@ -4,6 +4,8 @@ import (
 	"log"
 	"mbot/bot"
 	"mbot/config"
+
+	"github.com/fatih/color"
 )
 
 func main() {
@@ -12,7 +14,7 @@ func main() {
 	// Load configuration
 	cfg, err := config.LoadConfig(configPath)
 	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
+		color.Red("Error loading configuration, Did you forget to create a config.json file?")
 	}
 
 	// Initialize and start the bot
