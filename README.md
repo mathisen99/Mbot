@@ -12,7 +12,7 @@ The hole project is just for learning and having fun on irc.
 1. Clone the repository:
     ```sh
     git clone https://github.com/mathisen99/Mbot.git
-    cd mbot
+    cd Mbot
     ```
 
 2. Rename the example configuration file:
