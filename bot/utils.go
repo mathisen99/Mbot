@@ -22,7 +22,7 @@ func GetBotNickname(connection *ircevent.Connection) string {
 
 // FindURLs finds URLs in a given message
 func FindURLs(message string) []string {
-	urlRegex := `(https?://[^\s]+)`
+	urlRegex := `(https?://[^\s]+|http?://[^\s]+|www\.[^\s]+)`
 	re := regexp.MustCompile(urlRegex)
 	return re.FindAllString(message, -1)
 }

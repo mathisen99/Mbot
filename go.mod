@@ -5,6 +5,7 @@ go 1.22.5
 require (
 	github.com/ergochat/irc-go v0.4.0
 	github.com/fatih/color v1.17.0
+	github.com/joho/godotenv v1.5.1
 )
 
 require (

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"mbot/bot"
 	_ "mbot/commands" // Import the commands package to register the commands
@@ -8,10 +9,17 @@ import (
 	"os"
 
 	"github.com/fatih/color"
+	"github.com/joho/godotenv"
 )
 
 func main() {
 	configPath := "./data/config.json"
+
+	// Load environment variables
+	if err := godotenv.Load(); err != nil {
+		fmt.Printf("Error loading .env file: %v\n", err)
+		os.Exit(1)
+	}
 
 	// Load configuration
 	cfg, err := config.LoadConfig(configPath)

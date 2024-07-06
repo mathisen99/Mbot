@@ -14,12 +14,12 @@ func handleChannelMessage(connection *ircevent.Connection, sender, target, messa
 	// Get the bot's nickname
 	botNick := GetBotNickname(connection)
 
-	// Check for URLs in the message
+	// Check for URLs in the message and handles them
 	urls := FindURLs(message)
 	if len(urls) > 0 {
 		for _, url := range urls {
 			color.Green(">> URL found: %s", url)
-			// Add your URL handling logic here
+			HandleUrl(connection, target, url)
 		}
 	}
 
