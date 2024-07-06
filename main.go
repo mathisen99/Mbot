@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"mbot/bot"
+	_ "mbot/commands" // Import the commands package to register the commands
 	"mbot/config"
 	"os"
 
@@ -21,6 +22,10 @@ func main() {
 
 	// Initialize and start the bot
 	b := bot.NewBot(cfg)
+
+	// Register the event handlers
+	bot.RegisterEventHandlers(b.Connection)
+
 	if err := b.Connect(); err != nil {
 		log.Fatalf("Failed to connect: %v", err)
 	}
