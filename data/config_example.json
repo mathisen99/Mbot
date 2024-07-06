@@ -1,0 +1,9 @@
+{
+  "server": "irc.libera.chat",
+  "port": "6697",
+  "nick": "YourNickname",
+  "channels": ["#yourchannel"],
+  "nick_serv_user": "YourNickServUser",
+  "nick_serv_pass": "YourNickServPass",
+  "use_tls": true
+}
