@@ -26,3 +26,6 @@ Thumbs.db
 
 # Data folder
 /data/config.json
+
+# enviorment file
+.env
