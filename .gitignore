@@ -8,10 +8,6 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Go modules
-go.mod
-go.sum
-
 # Dependency directories (remove the comment below if you uncomment it)
 # vendor/
 
