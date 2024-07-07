@@ -8,31 +8,59 @@ import (
 
 	"github.com/ergochat/irc-go/ircevent"
 	"github.com/fatih/color"
+
+	"mbot/config"
 )
 
 // HandleUrl processes URLs found in messages
 func HandleUrl(connection *ircevent.Connection, sender, target, url string) {
+	featureConfig, err := config.LoadFeatures("./data/features.json")
+	if err != nil {
+		color.Red(">> Error loading feature configuration: %v", err)
+		connection.Privmsg(target, "Error loading feature configuration.")
+		return
+	}
+
 	switch {
 	case strings.Contains(url, "youtube.com"), strings.Contains(url, "youtu.be"):
-		HandleYoutubeLink(connection, target, url)
+		if featureConfig.EnableYouTubeCheck {
+			HandleYoutubeLink(connection, target, url)
+		} else {
+			color.Red(">> YouTube link handling is disabled")
+		}
 	case strings.Contains(url, "wikipedia.org"):
-		HandleWikipediaLink(connection, target, url)
+		if featureConfig.EnableWikipediaCheck {
+			HandleWikipediaLink(connection, target, url)
+		} else {
+			color.Red(">> Wikipedia link handling is disabled")
+		}
 	case strings.Contains(url, "github.com"):
-		HandleGithubLink(connection, target, url)
+		if featureConfig.EnableGithubCheck {
+			HandleGithubLink(connection, target, url)
+		} else {
+			color.Red(">> GitHub link handling is disabled")
+		}
 	case strings.Contains(url, "imdb.com"):
-		HandleIMDbLink(connection, target, url)
+		if featureConfig.EnableIMDbCheck {
+			HandleIMDbLink(connection, target, url)
+		} else {
+			color.Red(">> IMDb link handling is disabled")
+		}
 	default:
 		GetTitle(connection, target, url)
-		HandleVirusTotalLink(connection, sender, target, url)
+		if featureConfig.EnableVirusTotalCheck {
+			HandleVirusTotalLink(connection, sender, target, url)
+		} else {
+			color.Red(">> VirusTotal link handling is disabled")
+		}
 	}
 }
 
 // Function to get url title
 func GetTitle(connection *ircevent.Connection, target, url string) {
 	title, err := internal.FetchTitle(url)
-	if err != nil {
-		color.Red(">> Error fetching title: %v", err)
-		connection.Privmsg(target, "Error fetching title.")
+	if err != nil || title == "" {
+		color.Red(">> Error fetching title if <nil>: %v the page does not have a title", err)
 	} else {
 		connection.Privmsg(target, "^ "+title)
 	}

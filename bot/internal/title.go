@@ -3,15 +3,18 @@ package internal
 import (
 	"context"
 	"crypto/tls"
+	"fmt"
+	"log"
+	"mime"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/chromedp/chromedp"
 )
 
-// fetchTitle fetches the final destination URL by following redirects and mimicking a regular browser's request.
+// FetchTitle fetches the page title by mimicking a regular browser's request.
 func FetchTitle(url string) (string, error) {
-	// Create a custom HTTP client for making the initial GET request
 	client := &http.Client{
 		Timeout: 10 * time.Second,
 		Transport: &http.Transport{
@@ -19,51 +22,50 @@ func FetchTitle(url string) (string, error) {
 		},
 	}
 
-	// Make a GET request to the URL
 	resp, err := client.Get(url)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("error making GET request: %v", err)
 	}
 	defer resp.Body.Close()
 
-	// Get the final URL after redirections
 	finalURL := resp.Request.URL.String()
-
-	// Check the content type of the response
 	contentType := resp.Header.Get("Content-Type")
+	mediaType, _, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		return "", fmt.Errorf("error parsing content type: %v", err)
+	}
 
-	// If the content type is HTML, use chromedp to navigate and get the final URL
-	if contentType == "text/html" || contentType == "application/xhtml+xml" {
-		// Create a custom HTTP client for chromedp
+	log.Printf("Content-Type: %s\n", mediaType)
+
+	if strings.HasPrefix(mediaType, "text/html") {
 		opts := []chromedp.ExecAllocatorOption{
-			chromedp.NoFirstRun,
-			chromedp.NoDefaultBrowserCheck,
-			chromedp.Headless,
-			chromedp.DisableGPU,
-			chromedp.IgnoreCertErrors, // This option makes chromedp ignore certificate errors
+			chromedp.NoFirstRun,            // Skip first run tasks
+			chromedp.NoDefaultBrowserCheck, // Disable check for default browser
+			chromedp.Headless,              // Run in headless mode
+			chromedp.DisableGPU,            // Disable hardware acceleration
+			chromedp.IgnoreCertErrors,      // Ignore certificate errors
 		}
 
 		allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
 		defer cancel()
 
-		// Create a new context from the allocator
 		ctx, cancel := chromedp.NewContext(allocCtx)
 		defer cancel()
 
-		var chromedpFinalURL string
+		var pageTitle string
 		err = chromedp.Run(ctx,
-			chromedp.Navigate(finalURL),
+			chromedp.Navigate(finalURL),   // Navigate to the final URL
 			chromedp.Sleep(1*time.Second), // Sleep to allow JavaScript execution
-			chromedp.Location(&chromedpFinalURL),
+			chromedp.Title(&pageTitle),    // Get the page title
 		)
 
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("error running chromedp tasks: %v", err)
 		}
 
-		return chromedpFinalURL, nil
+		log.Printf("Fetched title: %s\n", pageTitle)
+		return pageTitle, nil
 	}
 
-	// If the content type is not HTML, return the final URL obtained from the GET request
-	return finalURL, nil
+	return "", fmt.Errorf("content type is not HTML: %s", contentType)
 }
