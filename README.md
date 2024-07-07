@@ -30,7 +30,7 @@ The whole project is just for learning and having fun on IRC.
       "nick_serv_user": "NickServUser",
       "nick_serv_pass": "NickServPass",
       "use_tls": true,
-      "features": {
+      "url_features": {
         "enable_youtube_check": true,
         "enable_wikipedia_check": true,
         "enable_github_check": true,
@@ -54,15 +54,36 @@ The whole project is just for learning and having fun on IRC.
         - `enable_imdb_check`: Enable or disable IMDb link handling.
         - `enable_virus_total_check`: Enable or disable VirusTotal link checking.
 
-## Running the Bot
+## API Keys
 
-1. Build and run the bot:
-    ```sh
-    go run .
-    ```
+For certain features, you will need to have API keys for YouTube, IMDb, and VirusTotal. These keys should be stored in a `.env` file or exported as environment variables.
 
-    Alternatively, you can build the bot and run the executable:
-    ```sh
-    go build -o irc-bot
-    ./irc-bot
-    ```
+### Example `.env` file
+
+Create a `.env` file in the root directory of the project with the following content:
+
+```sh
+YOUTUBE_API_KEY=your_youtube_api_key
+OMDb_API_KEY=your_omdb_api_key
+VIRUSTOTAL_API_KEY=your_virustotal_api_key
+```
+
+### Setting Environment Variables
+
+Alternatively, you can set the environment variables directly.
+
+#### On Windows:
+
+```sh
+setx YOUTUBE_API_KEY "your_youtube_api_key"
+setx OMDb_API_KEY "your_omdb_api_key"
+setx VIRUSTOTAL_API_KEY "your_virustotal_api_key"
+```
+
+#### On Linux or macOS:
+
+```bash
+export YOUTUBE_API_KEY="your_youtube_api_key"
+export OMDb_API_KEY="your_omdb_api_key"
+export VIRUSTOTAL_API_KEY="your_virustotal_api_key"
+```
