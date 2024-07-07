@@ -1,9 +1,9 @@
+// bot/event_handlers.go
 package bot
 
 import (
 	"sync"
 
-	"github.com/ergochat/irc-go/ircevent"
 	"github.com/ergochat/irc-go/ircmsg"
 	"github.com/fatih/color"
 )
@@ -11,9 +11,9 @@ import (
 var once sync.Once
 
 // Function to register event handlers
-func RegisterEventHandlers(connection *ircevent.Connection) {
+func RegisterEventHandlers(connection *Connection) {
 	once.Do(func() {
-		eventHandlers := map[string]func(*ircevent.Connection, ircmsg.Message){
+		eventHandlers := map[string]func(*Connection, ircmsg.Message){
 			"PRIVMSG": handlePrivmsg,
 			"NOTICE":  handleNotice,
 			"JOIN":    handleJoin,
@@ -43,7 +43,7 @@ func getSender(e ircmsg.Message) string {
 }
 
 // Function to handle PRIVMSG events (channel and private messages)
-func handlePrivmsg(connection *ircevent.Connection, e ircmsg.Message) {
+func handlePrivmsg(connection *Connection, e ircmsg.Message) {
 	sender := getSender(e)
 	target := e.Params[0]
 	message := e.Params[1]
@@ -56,74 +56,74 @@ func handlePrivmsg(connection *ircevent.Connection, e ircmsg.Message) {
 }
 
 // Function to handle private messages
-func handleNotice(connection *ircevent.Connection, e ircmsg.Message) {
+func handleNotice(connection *Connection, e ircmsg.Message) {
 	sender := getSender(e)
 	color.Yellow(">> Notice from %s: %s", sender, e.Params[1])
 }
 
 // Function to handle channel messages
-func handleJoin(connection *ircevent.Connection, e ircmsg.Message) {
+func handleJoin(connection *Connection, e ircmsg.Message) {
 	sender := getSender(e)
 	color.Green(">> %s joined %s", sender, e.Params[0])
 }
 
 // Function to handle channel messages
-func handlePart(connection *ircevent.Connection, e ircmsg.Message) {
+func handlePart(connection *Connection, e ircmsg.Message) {
 	sender := getSender(e)
 	color.Red(">> %s parted %s", sender, e.Params[0])
 }
 
 // Function to handle channel messages
-func handleQuit(connection *ircevent.Connection, e ircmsg.Message) {
+func handleQuit(connection *Connection, e ircmsg.Message) {
 	sender := getSender(e)
 	color.Magenta(">> %s quit", sender)
 }
 
 // Function to handle channel messages
-func handleKick(connection *ircevent.Connection, e ircmsg.Message) {
+func handleKick(connection *Connection, e ircmsg.Message) {
 	sender := getSender(e)
 	color.Red(">> %s was kicked from %s by %s: %s", e.Params[1], e.Params[0], sender, e.Params[2])
 }
 
 // Function to handle channel messages
-func handleBan(connection *ircevent.Connection, e ircmsg.Message) {
+func handleBan(connection *Connection, e ircmsg.Message) {
 	sender := getSender(e)
 	color.Red(">> %s was banned from %s by %s", e.Params[1], e.Params[0], sender)
 }
 
 // Function to handle channel messages
-func handleMode(connection *ircevent.Connection, e ircmsg.Message) {
+func handleMode(connection *Connection, e ircmsg.Message) {
 	sender := getSender(e)
 	color.Blue(">> %s set mode %s on %s", sender, e.Params[1], e.Params[0])
 }
 
 // Function to handle channel messages
-func handleNick(connection *ircevent.Connection, e ircmsg.Message) {
+func handleNick(connection *Connection, e ircmsg.Message) {
 	sender := getSender(e)
 	color.Cyan(">> %s is now known as %s", sender, e.Params[0])
 }
 
 // Function to handle channel messages
-func handleTopic(connection *ircevent.Connection, e ircmsg.Message) {
+func handleTopic(connection *Connection, e ircmsg.Message) {
 	sender := getSender(e)
 	color.Blue(">> %s changed topic on %s to: %s", sender, e.Params[0], e.Params[1])
 }
 
 // Function to handle channel messages
-func handleInvite(connection *ircevent.Connection, e ircmsg.Message) {
+func handleInvite(connection *Connection, e ircmsg.Message) {
 	sender := getSender(e)
 	color.Green(">> %s invited %s to %s", sender, e.Params[0], e.Params[1])
 }
 
 // Function to handle channel messages
-func handleError(connection *ircevent.Connection, e ircmsg.Message) {
+func handleError(connection *Connection, e ircmsg.Message) {
 	if len(e.Params) > 0 {
 		color.Red(">> ERROR: %s", e.Params[0])
 	}
 }
 
 // Function to handle channel messages
-func handlePing(connection *ircevent.Connection, e ircmsg.Message) {
+func handlePing(connection *Connection, e ircmsg.Message) {
 	color.Green(">> Received PING, sending PONG")
 	connection.Send("PONG", e.Params[0])
 }

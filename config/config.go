@@ -16,6 +16,7 @@ type Config struct {
 	NickServPass string      `json:"nick_serv_pass"`
 	UseTLS       bool        `json:"use_tls"`
 	TLSConfig    *tls.Config `json:"-"`
+	Features     Features    `json:"url_features"`
 }
 
 type Features struct {

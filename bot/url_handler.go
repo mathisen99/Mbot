@@ -8,18 +8,11 @@ import (
 
 	"github.com/ergochat/irc-go/ircevent"
 	"github.com/fatih/color"
-
-	"mbot/config"
 )
 
 // HandleUrl processes URLs found in messages
-func HandleUrl(connection *ircevent.Connection, sender, target, url string) {
-	featureConfig, err := config.LoadFeatures("./data/features.json")
-	if err != nil {
-		color.Red(">> Error loading feature configuration: %v", err)
-		connection.Privmsg(target, "Error loading feature configuration.")
-		return
-	}
+func HandleUrl(connection *Connection, sender, target, url string) {
+	featureConfig := connection.Config.Features
 
 	switch {
 	case strings.Contains(url, "youtube.com"), strings.Contains(url, "youtu.be"):
@@ -47,7 +40,7 @@ func HandleUrl(connection *ircevent.Connection, sender, target, url string) {
 			color.Red(">> IMDb link handling is disabled")
 		}
 	default:
-		GetTitle(connection, target, url)
+		GetTitle(connection.Connection, target, url)
 		if featureConfig.EnableVirusTotalCheck {
 			HandleVirusTotalLink(connection, sender, target, url)
 		} else {
@@ -67,7 +60,7 @@ func GetTitle(connection *ircevent.Connection, target, url string) {
 }
 
 // HandleYoutubeLink processes YouTube links
-func HandleYoutubeLink(connection *ircevent.Connection, target, url string) {
+func HandleYoutubeLink(connection *Connection, target, url string) {
 	videoID := internal.ExtractVideoID(url)
 	yourAPIKey := os.Getenv("YOUTUBE_API_KEY")
 	if yourAPIKey == "" {
@@ -86,12 +79,12 @@ func HandleYoutubeLink(connection *ircevent.Connection, target, url string) {
 }
 
 // HandleWikipediaLink processes Wikipedia links
-func HandleWikipediaLink(connection *ircevent.Connection, target, url string) {
+func HandleWikipediaLink(connection *Connection, target, url string) {
 	connection.Privmsg(target, "Wikipedia links are not supported yet.")
 }
 
 // HandleGithubLink processes GitHub links
-func HandleGithubLink(connection *ircevent.Connection, target, url string) {
+func HandleGithubLink(connection *Connection, target, url string) {
 	info, err := internal.FetchGithubRepoInfo(url)
 	if err != nil {
 		color.Red(">> Error fetching GitHub repository info: %v", err)
@@ -102,7 +95,7 @@ func HandleGithubLink(connection *ircevent.Connection, target, url string) {
 }
 
 // HandleIMDbLink processes IMDb links
-func HandleIMDbLink(connection *ircevent.Connection, target, url string) {
+func HandleIMDbLink(connection *Connection, target, url string) {
 	// check that API key is set
 	if os.Getenv("OMDB_API_KEY") == "" {
 		color.Red(">> OMDB API key is not set")
@@ -127,7 +120,7 @@ func HandleIMDbLink(connection *ircevent.Connection, target, url string) {
 }
 
 // HandleVirusTotalLink processes links using VirusTotal
-func HandleVirusTotalLink(connection *ircevent.Connection, sender, target, url string) {
+func HandleVirusTotalLink(connection *Connection, sender, target, url string) {
 	// check that API key is set
 	if os.Getenv("VIRUSTOTAL_API_KEY") == "" {
 		color.Red(">> VirusTotal API key is not set")

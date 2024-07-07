@@ -9,7 +9,7 @@ import (
 )
 
 type Bot struct {
-	Connection *ircevent.Connection
+	Connection *Connection
 	Config     *config.Config
 }
 
@@ -25,8 +25,13 @@ func NewBot(cfg *config.Config) *Bot {
 		RequestCaps:  []string{"server-time", "message-tags", "account-tag"},
 	}
 
-	bot := &Bot{
+	conn := &Connection{
 		Connection: ircCon,
+		Config:     cfg,
+	}
+
+	bot := &Bot{
+		Connection: conn,
 		Config:     cfg,
 	}
 
@@ -38,7 +43,7 @@ func NewBot(cfg *config.Config) *Bot {
 	})
 
 	// Registering callbacks and events
-	RegisterCallbacks(bot.Connection)
+	RegisterCallbacks(bot.Connection.Connection)
 	RegisterEventHandlers(bot.Connection)
 
 	return bot

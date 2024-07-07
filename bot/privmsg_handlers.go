@@ -1,10 +1,10 @@
+// bot/private_message_handler.go
 package bot
 
 import (
 	"sync"
 	"time"
 
-	"github.com/ergochat/irc-go/ircevent"
 	"github.com/fatih/color"
 )
 
@@ -12,7 +12,7 @@ var lastMessageTime = make(map[string]time.Time)
 var mu sync.Mutex
 
 // Function to handle private messages
-func handlePrivateMessage(connection *ircevent.Connection, sender, message string) {
+func handlePrivateMessage(connection *Connection, sender, message string) {
 	color.Magenta(">> Private message from %s: %s", sender, message)
 	nickname := ExtractNickname(sender)
 

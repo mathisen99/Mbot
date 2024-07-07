@@ -1,18 +1,18 @@
+// bot/channel_handlers.go
 package bot
 
 import (
 	"strings"
 
-	"github.com/ergochat/irc-go/ircevent"
 	"github.com/fatih/color"
 )
 
 // Function to handle channel messages
-func handleChannelMessage(connection *ircevent.Connection, sender, target, message string) {
+func handleChannelMessage(connection *Connection, sender, target, message string) {
 	color.Cyan(">> Channel message in %s from %s: %s", target, sender, message)
 
 	// Get the bot's nickname
-	botNick := GetBotNickname(connection)
+	botNick := GetBotNickname(connection.Connection)
 
 	// Check for URLs in the message and handles them
 	urls := FindURLs(message)
@@ -33,6 +33,6 @@ func handleChannelMessage(connection *ircevent.Connection, sender, target, messa
 
 	// Check for commands
 	if strings.HasPrefix(message, "!") {
-		handleCommand(connection, sender, target, message)
+		handleCommand(connection.Connection, sender, target, message)
 	}
 }
