@@ -5,5 +5,12 @@
   "channels": ["#yourchannel"],
   "nick_serv_user": "YourNickServUser",
   "nick_serv_pass": "YourNickServPass",
-  "use_tls": true
+  "use_tls": true,
+  "url_features": {
+    "enable_youtube_check": true,
+    "enable_wikipedia_check": false,
+    "enable_github_check": true,
+    "enable_imdb_check": true,
+    "enable_virus_total_check": false
+  }
 }
