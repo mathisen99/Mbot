@@ -58,6 +58,14 @@ The whole project is just for learning and having fun on IRC.
 
 For certain features, you will need to have API keys for YouTube, IMDb, and VirusTotal. These keys should be stored in a `.env` file or exported as environment variables.
 
+## Obtaining API Keys
+
+- **YouTube API Key**: You can get a YouTube API key by creating a project on the [Google Developers Console](https://console.developers.google.com/). Enable the YouTube Data API v3 and generate an API key.
+
+- **OMDb API Key**: To obtain an OMDb API key, register for a free or paid account on the [OMDb website](https://www.omdbapi.com/apikey.aspx). Once registered, you will receive an API key via email.
+
+- **VirusTotal API Key**: You can get a VirusTotal API key by signing up for a free account on the [VirusTotal website](https://www.virustotal.com/). After logging in, navigate to your profile and generate an API key.
+
 ### Example `.env` file
 
 Create a `.env` file in the root directory of the project with the following content:
