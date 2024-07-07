@@ -95,3 +95,7 @@ export YOUTUBE_API_KEY="your_youtube_api_key"
 export OMDb_API_KEY="your_omdb_api_key"
 export VIRUSTOTAL_API_KEY="your_virustotal_api_key"
 ```
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more details.
