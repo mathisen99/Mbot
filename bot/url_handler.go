@@ -1,17 +1,17 @@
 package bot
 
 import (
+	"fmt"
+	"mbot/bot/internal"
 	"os"
 	"strings"
 
 	"github.com/ergochat/irc-go/ircevent"
 	"github.com/fatih/color"
-
-	cmd "mbot/bot/internal"
 )
 
 // HandleUrl processes URLs found in messages
-func HandleUrl(connection *ircevent.Connection, target, url string) {
+func HandleUrl(connection *ircevent.Connection, sender, target, url string) {
 	switch {
 	case strings.Contains(url, "youtube.com"), strings.Contains(url, "youtu.be"):
 		HandleYoutubeLink(connection, target, url)
@@ -22,17 +22,30 @@ func HandleUrl(connection *ircevent.Connection, target, url string) {
 	case strings.Contains(url, "imdb.com"):
 		HandleIMDbLink(connection, target, url)
 	default:
-		connection.Privmsg(target, "You posted a link: "+url)
+		GetTitle(connection, target, url)
+		HandleVirusTotalLink(connection, sender, target, url)
+	}
+}
+
+// Function to get url title
+func GetTitle(connection *ircevent.Connection, target, url string) {
+	title, err := internal.FetchTitle(url)
+	if err != nil {
+		color.Red(">> Error fetching title: %v", err)
+		connection.Privmsg(target, "Error fetching title.")
+	} else {
+		connection.Privmsg(target, "^ "+title)
 	}
 }
 
 // HandleYoutubeLink processes YouTube links
 func HandleYoutubeLink(connection *ircevent.Connection, target, url string) {
-	videoID := cmd.ExtractVideoID(url)
+	videoID := internal.ExtractVideoID(url)
 	yourAPIKey := os.Getenv("YOUTUBE_API_KEY")
-	videoInfo, err := cmd.GetYouTubeVideoInfo(videoID, yourAPIKey)
+	videoInfo, err := internal.GetYouTubeVideoInfo(videoID, yourAPIKey)
 	if err != nil {
 		color.Red(">> Error getting video info: %v", err)
+		connection.Privmsg(target, "Error getting video info.")
 	} else {
 		connection.Privmsg(target, videoInfo)
 	}
@@ -40,15 +53,51 @@ func HandleYoutubeLink(connection *ircevent.Connection, target, url string) {
 
 // HandleWikipediaLink processes Wikipedia links
 func HandleWikipediaLink(connection *ircevent.Connection, target, url string) {
-	connection.Privmsg(target, "You shared a Wikipedia link! Wikipedia is a free online encyclopedia, created and edited by volunteers around the world.")
+	connection.Privmsg(target, "Wikipedia links are not supported yet.")
 }
 
 // HandleGithubLink processes GitHub links
 func HandleGithubLink(connection *ircevent.Connection, target, url string) {
-	connection.Privmsg(target, "You shared a GitHub link! GitHub is a web-based platform used for version control and collaboration.")
+	info, err := internal.FetchGithubRepoInfo(url)
+	if err != nil {
+		color.Red(">> Error fetching GitHub repository info: %v", err)
+		connection.Privmsg(target, "Error fetching GitHub repository info.")
+	} else {
+		connection.Privmsg(target, info)
+	}
 }
 
 // HandleIMDbLink processes IMDb links
 func HandleIMDbLink(connection *ircevent.Connection, target, url string) {
-	connection.Privmsg(target, "You shared an IMDb link! IMDb is an online database of information related to films, television programs, home videos, video games, and streaming content.")
+	movieID := internal.ExtractIMDBID(url)
+	if movieID == "" {
+		color.Red(">> Error extracting IMDb ID from URL")
+		connection.Privmsg(target, "Error extracting IMDb ID from URL.")
+		return
+	}
+
+	info, err := internal.GetIMDBMovieInfo(movieID)
+	if err != nil {
+		color.Red(">> Error fetching IMDb movie info: %v", err)
+		connection.Privmsg(target, "Error fetching IMDb movie info.")
+	} else {
+		connection.Privmsg(target, info)
+	}
+}
+
+// HandleVirusTotalLink processes links using VirusTotal
+func HandleVirusTotalLink(connection *ircevent.Connection, sender, target, url string) {
+	nick := ExtractNickname(sender)
+	reportMessage, err := internal.CheckAndFetchURLReport(url)
+	if err != nil {
+		color.Red(">> Error checking URL with VirusTotal: %v", err)
+		connection.Privmsg(target, "Error checking URL with VirusTotal.")
+	} else {
+		if strings.Contains(reportMessage, "malicious") {
+			color.Red(">> URL is malicious: %s", url)
+			connection.Privmsg(target, fmt.Sprintf("⚠️ %s just pasted a link that triggered my automatic defense systems ☢️ %s Here is a VirusTotal report: %s Note: low malicious score may be false positive", nick, url, reportMessage))
+		} else {
+			color.Green(">> URL is safe: %s", url)
+		}
+	}
 }

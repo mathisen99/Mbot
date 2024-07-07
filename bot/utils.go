@@ -26,3 +26,20 @@ func FindURLs(message string) []string {
 	re := regexp.MustCompile(urlRegex)
 	return re.FindAllString(message, -1)
 }
+
+// splitMessage splits a message into chunks based on the max length
+func SplitMessage(message string, maxLength int) []string {
+	var chunks []string
+
+	for len(message) > maxLength {
+		cutIndex := strings.LastIndex(message[:maxLength], " ")
+		if cutIndex == -1 {
+			cutIndex = maxLength
+		}
+		chunks = append(chunks, message[:cutIndex])
+		message = message[cutIndex:]
+	}
+
+	chunks = append(chunks, message)
+	return chunks
+}

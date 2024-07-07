@@ -19,7 +19,7 @@ func handleChannelMessage(connection *ircevent.Connection, sender, target, messa
 	if len(urls) > 0 {
 		for _, url := range urls {
 			color.Green(">> URL found: %s", url)
-			HandleUrl(connection, target, url)
+			HandleUrl(connection, sender, target, url)
 		}
 	}
 
