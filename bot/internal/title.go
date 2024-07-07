@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"log"
 	"mime"
 	"net/http"
 	"strings"
@@ -35,8 +34,6 @@ func FetchTitle(url string) (string, error) {
 		return "", fmt.Errorf("error parsing content type: %v", err)
 	}
 
-	log.Printf("Content-Type: %s\n", mediaType)
-
 	if strings.HasPrefix(mediaType, "text/html") {
 		opts := []chromedp.ExecAllocatorOption{
 			chromedp.NoFirstRun,            // Skip first run tasks
@@ -63,7 +60,6 @@ func FetchTitle(url string) (string, error) {
 			return "", fmt.Errorf("error running chromedp tasks: %v", err)
 		}
 
-		log.Printf("Fetched title: %s\n", pageTitle)
 		return pageTitle, nil
 	}
 

@@ -70,6 +70,12 @@ func GetTitle(connection *ircevent.Connection, target, url string) {
 func HandleYoutubeLink(connection *ircevent.Connection, target, url string) {
 	videoID := internal.ExtractVideoID(url)
 	yourAPIKey := os.Getenv("YOUTUBE_API_KEY")
+	if yourAPIKey == "" {
+		color.Red(">> YouTube API key is not set")
+		connection.Privmsg(target, "YouTube API key is not set. Please set it in the environment variable YOUTUBE_API_KEY. or disable the feature in the configuration file.")
+		return
+	}
+
 	videoInfo, err := internal.GetYouTubeVideoInfo(videoID, yourAPIKey)
 	if err != nil {
 		color.Red(">> Error getting video info: %v", err)
@@ -97,6 +103,13 @@ func HandleGithubLink(connection *ircevent.Connection, target, url string) {
 
 // HandleIMDbLink processes IMDb links
 func HandleIMDbLink(connection *ircevent.Connection, target, url string) {
+	// check that API key is set
+	if os.Getenv("OMDB_API_KEY") == "" {
+		color.Red(">> OMDB API key is not set")
+		connection.Privmsg(target, "OMDB API key is not set. Please set it in the environment variable OMDb_API_KEY. or disable the feature in the configuration file.")
+		return
+	}
+
 	movieID := internal.ExtractIMDBID(url)
 	if movieID == "" {
 		color.Red(">> Error extracting IMDb ID from URL")
@@ -115,6 +128,13 @@ func HandleIMDbLink(connection *ircevent.Connection, target, url string) {
 
 // HandleVirusTotalLink processes links using VirusTotal
 func HandleVirusTotalLink(connection *ircevent.Connection, sender, target, url string) {
+	// check that API key is set
+	if os.Getenv("VIRUSTOTAL_API_KEY") == "" {
+		color.Red(">> VirusTotal API key is not set")
+		connection.Privmsg(target, "VirusTotal API key is not set. Please set it in the environment variable VIRUSTOTAL_API_KEY. or disable the feature in the configuration file.")
+		return
+	}
+
 	nick := ExtractNickname(sender)
 	reportMessage, err := internal.CheckAndFetchURLReport(url)
 	if err != nil {
