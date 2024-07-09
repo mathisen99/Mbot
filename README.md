@@ -55,6 +55,54 @@ This project is a fun exploration into the world of IRC, and is currently still 
         - `enable_imdb_check`: Enable or disable IMDb link handling.
         - `enable_virus_total_check`: Enable or disable VirusTotal link checking.
 
+## User Management
+
+### Managing Users
+
+You can manage users by adding or removing them using the following commands in the IRC channels the bot is in:
+
+- **Add User**: `!adduser <nickname> <role>`
+- **Remove User**: `!deluser <nickname>`
+
+### Roles
+
+The following roles are supported:
+
+- `Owner`: Highest privilege level.
+- `Admin`: Administrative privileges.
+- `Trusted`: Trusted user.
+- `Regular`: Regular user.
+- `BadBoy`: Restricted user.
+
+### Example `users.json`
+
+The users are stored in a `users.json` file located in the `data` directory. Below is an example structure:
+
+```json
+[
+    {
+        "hostmask": "jane!jane@irc.example.com",
+        "role": "Admin"
+    },
+    {
+        "hostmask": "bob!bob@irc.example.com",
+        "role": "Trusted"
+    },
+    {
+        "hostmask": "alice!alice@irc.example.com",
+        "role": "Regular"
+    },
+    {
+        "hostmask": "eve!eve@irc.example.com",
+        "role": "BadBoy"
+    },
+    {
+        "hostmask": "charlie!charlie@irc.example.com",
+        "role": "Owner"
+    }
+]
+```
+
 ## API Keys
 
 For certain features, you will need to have API keys for YouTube, IMDb, and VirusTotal. These keys should be stored in a `.env` file or exported as environment variables.
