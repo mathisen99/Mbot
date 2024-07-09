@@ -1,0 +1,22 @@
+[
+    {
+        "hostmask": "jane!jane@irc.example.com",
+        "role": "Admin"
+    },
+    {
+        "hostmask": "bob!bob@irc.example.com",
+        "role": "Trusted"
+    },
+    {
+        "hostmask": "alice!alice@irc.example.com",
+        "role": "Regular"
+    },
+    {
+        "hostmask": "eve!eve@irc.example.com",
+        "role": "BadBoy"
+    },
+    {
+        "hostmask": "charlie!charlie@irc.example.com",
+        "role": "Owner"
+    }
+]
