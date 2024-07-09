@@ -1,4 +1,3 @@
-// bot/channel_handlers.go
 package bot
 
 import (
@@ -8,7 +7,7 @@ import (
 )
 
 // Function to handle channel messages
-func handleChannelMessage(connection *Connection, sender, target, message string) {
+func handleChannelMessage(connection *Connection, sender, target, message string, users map[string]User) {
 	color.Cyan(">> Channel message in %s from %s: %s", target, sender, message)
 
 	// Get the bot's nickname
@@ -33,6 +32,6 @@ func handleChannelMessage(connection *Connection, sender, target, message string
 
 	// Check for commands
 	if strings.HasPrefix(message, "!") {
-		handleCommand(connection.Connection, sender, target, message)
+		handleCommand(connection.Connection, sender, target, message, users)
 	}
 }

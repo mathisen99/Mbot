@@ -491,6 +491,31 @@ func RegisterCallbacks(connection *ircevent.Connection) {
 		"ERR_USERSDONTMATCH": func(e ircmsg.Message) {
 			color.Red(">> Cannot change mode for other users")
 		},
+		"RPL_WHOISUSER": func(e ircmsg.Message) {
+			if len(e.Params) > 4 {
+				nick := e.Params[1]
+				hostmask := e.Params[2] + "@" + e.Params[3]
+				color.Green(">> WHOIS user: %s, hostmask: %s", nick, hostmask)
+				WhoisMu.Lock()
+				if callback, exists := PendingWhois[nick]; exists {
+					delete(PendingWhois, nick)
+					callback(hostmask)
+				}
+				WhoisMu.Unlock()
+			}
+		},
+		"RPL_ENDOFWHOIS": func(e ircmsg.Message) {
+			if len(e.Params) > 1 {
+				nick := e.Params[1]
+				color.Cyan(">> End of WHOIS for %s", nick)
+				WhoisMu.Lock()
+				if callback, exists := PendingWhois[nick]; exists {
+					delete(PendingWhois, nick)
+					callback("")
+				}
+				WhoisMu.Unlock()
+			}
+		},
 	}
 
 	for key, handler := range callbacks {

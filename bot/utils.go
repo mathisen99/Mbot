@@ -15,6 +15,20 @@ func ExtractNickname(fullSender string) string {
 	return fullSender
 }
 
+// ExtractHostmask extracts the hostmask from the sender string
+func ExtractHostmask(sender string) string {
+	// sender is in the format "nickname!username@hostmask"
+	parts := strings.Split(sender, "!")
+	if len(parts) < 2 {
+		return ""
+	}
+	hostParts := strings.Split(parts[1], "@")
+	if len(hostParts) < 2 {
+		return ""
+	}
+	return hostParts[1]
+}
+
 // GetBotNickname retrieves the bot's current nickname
 func GetBotNickname(connection *ircevent.Connection) string {
 	return connection.Nick

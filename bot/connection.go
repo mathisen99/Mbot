@@ -1,4 +1,3 @@
-// bot/connection.go
 package bot
 
 import (

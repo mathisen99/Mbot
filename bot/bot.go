@@ -14,7 +14,7 @@ type Bot struct {
 }
 
 // NewBot creates a new bot instance
-func NewBot(cfg *config.Config) *Bot {
+func NewBot(cfg *config.Config, users map[string]User) *Bot {
 	ircCon := &ircevent.Connection{
 		Server:       cfg.Server + ":" + cfg.Port,
 		Nick:         cfg.Nick,
@@ -44,7 +44,7 @@ func NewBot(cfg *config.Config) *Bot {
 
 	// Registering callbacks and events
 	RegisterCallbacks(bot.Connection.Connection)
-	RegisterEventHandlers(bot.Connection)
+	RegisterEventHandlers(bot.Connection, users)
 
 	return bot
 }

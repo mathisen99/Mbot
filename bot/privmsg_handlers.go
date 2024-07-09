@@ -1,4 +1,3 @@
-// bot/private_message_handler.go
 package bot
 
 import (
