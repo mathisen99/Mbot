@@ -84,5 +84,5 @@ func AddUserCommand(connection *ircevent.Connection, sender, target, message str
 
 // Register the command
 func init() {
-	bot.RegisterCommand("!adduser", AddUserCommand)
+	bot.RegisterCommand("!adduser", AddUserCommand, bot.RoleAdmin)
 }

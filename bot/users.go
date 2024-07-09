@@ -6,6 +6,25 @@ import (
 	"os"
 )
 
+// UserRoles is a map of user roles to their respective values
+var UserRoles = map[string]int{
+	"Owner":   RoleOwner,
+	"Admin":   RoleAdmin,
+	"Trusted": RoleTrusted,
+	"Regular": RoleRegular,
+	"BadBoy":  RoleBadBoy,
+}
+
+// Role levels
+const (
+	RoleEveryone = 0
+	RoleBadBoy   = -1
+	RoleRegular  = 2
+	RoleTrusted  = 3
+	RoleAdmin    = 4
+	RoleOwner    = 5
+)
+
 // global users map
 var Users map[string]User
 
@@ -15,15 +34,7 @@ type User struct {
 	Role     string `json:"role"`
 }
 
-// UserRoles is a map of user roles to their respective values
-var UserRoles = map[string]int{
-	"Owner":   5,
-	"Admin":   4,
-	"Trusted": 3,
-	"Regular": 2,
-	"BadBoy":  1,
-}
-
+// Path to the users JSON file
 var filePath = "./data/users.json"
 
 // function to load users from a JSON file
@@ -97,31 +108,37 @@ func UpdateUser(users map[string]User, user User) error {
 	return SaveUsers(users)
 }
 
+// Function to get the role level of a user
+func GetUserRoleLevel(users map[string]User, hostmask string) int {
+	role := GetUserRole(users, hostmask)
+	return UserRoles[role]
+}
+
 // Check if a user has a specific role
 func GetUserRole(users map[string]User, hostmask string) string {
 	if user, exists := users[hostmask]; exists {
 		return user.Role
 	}
-	return "Regular" // Default role if not found
+	return "Everyone" // Default role if not found
 }
 
 // Role comparison functions
 func IsUserOwner(users map[string]User, hostmask string) bool {
-	return UserRoles[GetUserRole(users, hostmask)] == UserRoles["Owner"]
+	return UserRoles[GetUserRole(users, hostmask)] == RoleOwner
 }
 
 func IsUserAdmin(users map[string]User, hostmask string) bool {
-	return UserRoles[GetUserRole(users, hostmask)] >= UserRoles["Admin"]
+	return UserRoles[GetUserRole(users, hostmask)] >= RoleAdmin
 }
 
 func IsUserTrusted(users map[string]User, hostmask string) bool {
-	return UserRoles[GetUserRole(users, hostmask)] >= UserRoles["Trusted"]
+	return UserRoles[GetUserRole(users, hostmask)] >= RoleTrusted
 }
 
 func IsUserRegular(users map[string]User, hostmask string) bool {
-	return UserRoles[GetUserRole(users, hostmask)] >= UserRoles["Regular"]
+	return UserRoles[GetUserRole(users, hostmask)] >= RoleRegular
 }
 
 func IsUserBadBoy(users map[string]User, hostmask string) bool {
-	return UserRoles[GetUserRole(users, hostmask)] == UserRoles["BadBoy"]
+	return UserRoles[GetUserRole(users, hostmask)] == RoleBadBoy
 }

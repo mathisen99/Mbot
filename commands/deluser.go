@@ -60,5 +60,5 @@ func RemoveUserCommand(connection *ircevent.Connection, sender, target, message 
 
 // Register the command
 func init() {
-	bot.RegisterCommand("!deluser", RemoveUserCommand)
+	bot.RegisterCommand("!deluser", RemoveUserCommand, bot.RoleAdmin)
 }

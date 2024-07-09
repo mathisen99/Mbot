@@ -17,5 +17,5 @@ func HelloCommand(connection *ircevent.Connection, sender, target, message strin
 }
 
 func init() {
-	bot.RegisterCommand("!hello", HelloCommand)
+	bot.RegisterCommand("!hello", HelloCommand, bot.RoleEveryone)
 }
