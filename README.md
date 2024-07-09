@@ -1,7 +1,8 @@
 # Mbot
 
-IRC bot created by Tommy Mathisen for fun.
-The whole project is just for learning and having fun on IRC.
+Mbot is an IRC bot developed by Tommy Mathisen, designed purely for enjoyment and learning.
+
+This project is a fun exploration into the world of IRC, and is currently still under development, with many features yet to be completed.
 
 ## Prerequisites
 
