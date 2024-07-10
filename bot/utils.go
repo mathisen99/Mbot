@@ -15,26 +15,34 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// ExtractNickname extracts the nickname from the full sender string
-func ExtractNickname(fullSender string) string {
-	if idx := strings.Index(fullSender, "!"); idx != -1 {
-		return fullSender[:idx]
+// Function to gracefully shutdown the bot
+func ShutdownBot(connection *ircevent.Connection) {
+	color.Red("Shutting down bot...")
+	connection.Quit()
+	os.Exit(0)
+}
+
+// ExtractNickname extracts the nickname from the sender string
+func ExtractNickname(sender string) string {
+	parts := strings.Split(sender, "!")
+	if len(parts) > 0 {
+		return parts[0]
 	}
-	return fullSender
+	return sender
 }
 
 // ExtractHostmask extracts the hostmask from the sender string
 func ExtractHostmask(sender string) string {
-	// sender is in the format "nickname!username@hostmask"
 	parts := strings.Split(sender, "!")
-	if len(parts) < 2 {
-		return ""
+	if len(parts) > 1 {
+		userHostParts := strings.Split(parts[1], "@")
+		if len(userHostParts) > 1 {
+			username := userHostParts[0]
+			host := userHostParts[1]
+			return fmt.Sprintf("%s@%s", username, host)
+		}
 	}
-	hostParts := strings.Split(parts[1], "@")
-	if len(hostParts) < 2 {
-		return ""
-	}
-	return hostParts[1]
+	return sender
 }
 
 // GetBotNickname retrieves the bot's current nickname

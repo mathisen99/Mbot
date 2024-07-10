@@ -1,22 +1,22 @@
 [
     {
-        "hostmask": "jane!jane@irc.example.com",
+        "hostmask": "~jane@irc/example/com/jane",
         "role": "Admin"
     },
     {
-        "hostmask": "bob!bob@irc.example.com",
+        "hostmask": "~bob@irc/example/com/bob",
         "role": "Trusted"
     },
     {
-        "hostmask": "alice!alice@irc.example.com",
+        "hostmask": "alice@irc/example/com/alice",
         "role": "Regular"
     },
     {
-        "hostmask": "eve!eve@irc.example.com",
+        "hostmask": "eve@irc/example/com/eve",
         "role": "BadBoy"
     },
     {
-        "hostmask": "charlie!charlie@irc.example.com",
+        "hostmask": "charlie@irc/example/com/charlie",
         "role": "Owner"
     }
 ]

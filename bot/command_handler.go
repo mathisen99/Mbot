@@ -33,6 +33,7 @@ func RegisterCommand(cmd string, handler CommandHandler, requiredRole int) {
 func handleCommand(connection *ircevent.Connection, sender, target, message string, users map[string]User) {
 	trimmedMessage := strings.TrimSpace(message)
 	parts := strings.Fields(trimmedMessage)
+
 	if len(parts) == 0 {
 		return
 	}

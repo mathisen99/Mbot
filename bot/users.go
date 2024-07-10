@@ -3,7 +3,15 @@ package bot
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
+	"strings"
+	"syscall"
+	"time"
+
+	"github.com/ergochat/irc-go/ircevent"
+	"github.com/ergochat/irc-go/ircmsg"
+	"github.com/fatih/color"
 )
 
 // UserRoles is a map of user roles to their respective values
@@ -108,18 +116,138 @@ func UpdateUser(users map[string]User, user User) error {
 	return SaveUsers(users)
 }
 
-// Function to get the role level of a user
-func GetUserRoleLevel(users map[string]User, hostmask string) int {
-	role := GetUserRole(users, hostmask)
-	return UserRoles[role]
+// Normalize the hostmask to ensure consistent format
+func NormalizeHostmask(hostmask string) string {
+	if !strings.HasPrefix(hostmask, "~") {
+		return "~" + hostmask
+	}
+	return hostmask
 }
 
 // Check if a user has a specific role
 func GetUserRole(users map[string]User, hostmask string) string {
-	if user, exists := users[hostmask]; exists {
-		return user.Role
+	normalizedHostmask := NormalizeHostmask(hostmask)
+	for _, user := range users {
+		if user.Hostmask == normalizedHostmask {
+			return user.Role
+		}
 	}
 	return "Everyone" // Default role if not found
+}
+
+// Function to get the role level of a user
+func GetUserRoleLevel(users map[string]User, hostmask string) int {
+	normalizedHostmask := NormalizeHostmask(hostmask)
+	role := GetUserRole(users, normalizedHostmask)
+	return UserRoles[role]
+}
+
+// AddOwnerPrompt asks for the owner's nick and adds the owner to the users map
+func AddOwnerPrompt(conn *Connection, users map[string]User) {
+	// Ask the user what nick the owner is on the network
+	color.Cyan("=============================== NO OWNER FOUND ===============================")
+	color.Red("No owner was found in the users.json file. Please set an owner.")
+	color.Red("The bot will shut down if no owner is set within 1 minute after connecting.")
+	color.Red("The bot will message the owner to confirm the Setup password.")
+	color.Cyan("==============================================================================")
+	color.Blue(">> Please enter the nick of the owner on the network:")
+	var ownerNick string
+	fmt.Scanln(&ownerNick)
+	color.Blue(">> Please enter your Setup password:")
+	var setupPassword string
+	fmt.Scanln(&setupPassword)
+
+	// do a WHOIS on the nick to get the hostmask
+	conn.SendRaw(fmt.Sprintf("WHOIS %s", ownerNick))
+
+	// Register a callback to handle the WHOIS response
+	conn.AddCallback("311", func(e ircmsg.Message) {
+		// 311 is the RPL_WHOISUSER response
+		if len(e.Params) >= 5 {
+			user := e.Params[2]
+			host := e.Params[3]
+
+			// Check if the user already has a tilde and format accordingly
+			var hostmask string
+			if user[0] == '~' {
+				hostmask = fmt.Sprintf("%s@%s", user, host)
+			} else {
+				hostmask = fmt.Sprintf("~%s@%s", user, host)
+			}
+
+			// Create the owner user
+			owner := User{
+				Hostmask: hostmask,
+				Role:     "Owner",
+			}
+
+			// Send request to confirm Setup password to the owner
+			conn.Privmsg(ownerNick, "Hey! If you know me, spill the Setup password. If not, no worries—just laugh and pretend you never saw this. Bot out! 🤖")
+
+			// Create a channel to signal when the password is confirmed
+			passwordConfirmed := make(chan bool)
+
+			// Declare the variable outside the callback to ensure it's in scope
+			var privmsgCallbackID ircevent.CallbackID
+
+			// Temporary callback to handle the password confirmation response
+			privmsgCallbackID = conn.AddCallback("PRIVMSG", func(e ircmsg.Message) {
+				// Parse the nick from the Source
+				sourceParts := strings.SplitN(e.Source, "!", 2)
+				nick := sourceParts[0]
+
+				color.Yellow(">> Received message from %s: %s", nick, e.Params[1])
+
+				if nick == ownerNick && len(e.Params) > 1 && e.Params[1] == setupPassword {
+					color.Green(">> Setup password confirmed")
+					conn.Privmsg(ownerNick, "Setup password confirmed. You are now the owner of the bot.")
+
+					// Add the owner to the users map
+					err := AddUser(users, owner)
+					if err != nil {
+						color.Red(">> Failed to add owner: %v", err)
+						return
+					}
+					color.Green(">> Owner set successfully:")
+					color.Green(">> Hostmask: %s", hostmask)
+
+					// Signal that the password was confirmed
+					passwordConfirmed <- true
+
+					// Close the channel to signal the timeout goroutine
+					close(passwordConfirmed)
+
+					// Remove the temporary callback
+					conn.RemoveCallback(privmsgCallbackID)
+				} else {
+					color.Red(">> Setup password incorrect")
+					conn.Privmsg(ownerNick, "Setup password was incorrect. Bye!")
+
+					// Remove the temporary callback
+					conn.RemoveCallback(privmsgCallbackID)
+
+					// Shutdown the bot
+					log.Println("Sending shutdown signal")
+					syscall.Kill(syscall.Getpid(), syscall.SIGTERM) // Trigger shutdown programmatically
+				}
+			})
+
+			// Start a timer for 1 minute
+			go func() {
+				select {
+				case <-time.After(1 * time.Minute):
+					// Timer expired, no password received
+					color.Red(">> No response within 1 minute, shutting down.")
+					conn.Privmsg(ownerNick, "No response within 1 minute. Shutting down. Bye!")
+					conn.RemoveCallback(privmsgCallbackID)
+					syscall.Kill(syscall.Getpid(), syscall.SIGTERM) // Trigger shutdown programmatically
+				case <-passwordConfirmed:
+					// Password was confirmed, stop the timer
+					return
+				}
+			}()
+		}
+	})
 }
 
 // Role comparison functions

@@ -3,8 +3,11 @@ package main
 import (
 	"log"
 	"mbot/bot"
-	_ "mbot/commands"
 	"os"
+	"os/signal"
+	"syscall"
+
+	_ "mbot/commands" // Import all commands
 )
 
 func main() {
@@ -29,5 +32,18 @@ func main() {
 	if err := b.Connect(); err != nil {
 		log.Fatalf("Failed to connect: %v", err)
 	}
+
+	// Set up channel to listen for OS signals
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
+	// Start a goroutine to listen for shutdown signals
+	go func() {
+		sig := <-sigChan
+		log.Printf("Received signal: %s\n", sig)
+		bot.ShutdownBot(b.Connection.Connection)
+	}()
+
+	// Start the bot's main loop
 	b.Loop()
 }

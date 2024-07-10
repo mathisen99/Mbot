@@ -28,5 +28,5 @@ func handlePrivateMessage(connection *Connection, sender, message string) {
 
 	lastMessageTime[nickname] = time.Now()
 
-	connection.Privmsg(nickname, "I don't support private commands yet. Please use me in the channel for now.")
+	connection.Privmsg(nickname, "Let's keep this between us. I won't tell anyone.")
 }

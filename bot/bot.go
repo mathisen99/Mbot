@@ -36,7 +36,22 @@ func NewBot(cfg *config.Config, users map[string]User) *Bot {
 	}
 
 	bot.Connection.AddConnectCallback(func(e ircmsg.Message) {
-		color.Green(">> Connection successful, joining channels")
+		color.Green(">> Connection successful")
+
+		// Check if an owner is set in the users map
+		ownerFound := false
+		for _, user := range users {
+			if user.Role == "Owner" {
+				ownerFound = true
+				break
+			}
+		}
+
+		if !ownerFound {
+			color.Red(">> Owner not found or invalid in users.json")
+			AddOwnerPrompt(bot.Connection, users)
+		}
+
 		for _, channel := range cfg.Channels {
 			bot.Connection.Join(channel)
 		}
