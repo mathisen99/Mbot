@@ -4,28 +4,39 @@ import (
 	"fmt"
 	"strings"
 
+	"mbot/config"
+
 	"github.com/ergochat/irc-go/ircevent"
 )
 
 var rateLimiter = NewRateLimiter()
+var ConfigData *config.Config
 
 // CommandHandler is a type alias for functions that handle commands
 type CommandHandler func(connection *ircevent.Connection, sender, target, message string, users map[string]User)
 
-// Command struct to hold the handler and required role
+// Command struct to hold the handler, required role, and group/allowed channels
 type Command struct {
-	Handler      CommandHandler
-	RequiredRole int
+	Handler         CommandHandler
+	RequiredRole    int
+	AllowedChannels []string
 }
 
 // Map of commands to their handlers and required roles
 var commands = map[string]Command{}
 
-// Function to register a command
 func RegisterCommand(cmd string, handler CommandHandler, requiredRole int) {
-	commands[cmd] = Command{
-		Handler:      handler,
-		RequiredRole: requiredRole,
+	for _, group := range ConfigData.CommandGroups {
+		for _, command := range group.Commands {
+			if command == cmd {
+				commands[cmd] = Command{
+					Handler:         handler,
+					RequiredRole:    requiredRole,
+					AllowedChannels: group.AllowedChannels,
+				}
+				return
+			}
+		}
 	}
 }
 
@@ -43,7 +54,11 @@ func handleCommand(connection *ircevent.Connection, sender, target, message stri
 		hostmask := ExtractHostmask(sender)
 		userRoleLevel := GetUserRoleLevel(users, hostmask)
 
-		// Check rate limiter
+		if !isCommandAllowedInChannel(target, command) {
+			connection.Privmsg(target, "This command is not allowed in this channel.")
+			return
+		}
+
 		if !rateLimiter.AllowCommand(nickname) {
 			if remaining := rateLimiter.GetCooldownRemaining(nickname); remaining > 0 {
 				connection.Privmsg(target, fmt.Sprintf("You are currently in cooldown for %s. Please wait before sending more commands.", FormatDuration(remaining)))
@@ -65,4 +80,14 @@ func handleCommand(connection *ircevent.Connection, sender, target, message stri
 			connection.Privmsg(target, "You do not have permission to execute this command.")
 		}
 	}
+}
+
+// Helper function to check if a command is allowed in a channel
+func isCommandAllowedInChannel(channel string, command Command) bool {
+	for _, allowedChannel := range command.AllowedChannels {
+		if allowedChannel == channel {
+			return true
+		}
+	}
+	return false
 }

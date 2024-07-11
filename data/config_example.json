@@ -1,10 +1,10 @@
 {
   "server": "irc.libera.chat",
   "port": "6697",
-  "nick": "YourNickname",
-  "channels": ["#yourchannel"],
-  "nick_serv_user": "YourNickServUser",
-  "nick_serv_pass": "YourNickServPass",
+  "nick": "ExampleNick",
+  "channels": ["#examplechannel"],
+  "nick_serv_user": "ExampleNickServUser",
+  "nick_serv_pass": "ExampleNickServPass",
   "use_tls": true,
   "url_features": {
     "enable_youtube_check": true,
@@ -12,5 +12,19 @@
     "enable_github_check": true,
     "enable_imdb_check": true,
     "enable_virus_total_check": false
+  },
+  "command_groups": {
+    "owner_commands": {
+      "commands": ["!shutdown"],
+      "allowed_channels": ["#examplechannel"]
+    },
+    "admin_commands": {
+      "commands": ["!adduser", "!deluser", "!op", "!deop", "!voice", "!devoice", "!kick", "!ban", "!unban", "!invite"],
+      "allowed_channels": ["#examplechannel"]
+    },
+    "general_commands": {
+      "commands": ["!hello", "!join", "!part", "!topic", "!nick", "!whois", "!list", "!quit", "!names"],
+      "allowed_channels": ["#examplechannel"]
+    }
   }
 }

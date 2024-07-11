@@ -16,6 +16,7 @@ func HelloCommand(connection *ircevent.Connection, sender, target, message strin
 	connection.Privmsg(target, userList)
 }
 
-func init() {
-	bot.RegisterCommand("!hello", HelloCommand, bot.RoleEveryone)
+// RegisterHelloCommand registers the !hello command
+func RegisterHelloCommand() {
+	bot.RegisterCommand("!hello", HelloCommand, bot.RoleAdmin)
 }

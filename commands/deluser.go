@@ -58,7 +58,7 @@ func RemoveUserCommand(connection *ircevent.Connection, sender, target, message 
 	connection.SendRaw(fmt.Sprintf("WHOIS %s", nick))
 }
 
-// Register the command
-func init() {
+// RegisterRemoveUserCommand registers the !deluser command
+func RegisterRemoveUserCommand() {
 	bot.RegisterCommand("!deluser", RemoveUserCommand, bot.RoleAdmin)
 }

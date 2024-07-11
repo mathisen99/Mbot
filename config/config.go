@@ -8,15 +8,16 @@ import (
 )
 
 type Config struct {
-	Server       string      `json:"server"`
-	Port         string      `json:"port"`
-	Nick         string      `json:"nick"`
-	Channels     []string    `json:"channels"`
-	NickServUser string      `json:"nick_serv_user"`
-	NickServPass string      `json:"nick_serv_pass"`
-	UseTLS       bool        `json:"use_tls"`
-	TLSConfig    *tls.Config `json:"-"`
-	Features     Features    `json:"url_features"`
+	Server        string                  `json:"server"`
+	Port          string                  `json:"port"`
+	Nick          string                  `json:"nick"`
+	Channels      []string                `json:"channels"`
+	NickServUser  string                  `json:"nick_serv_user"`
+	NickServPass  string                  `json:"nick_serv_pass"`
+	UseTLS        bool                    `json:"use_tls"`
+	TLSConfig     *tls.Config             `json:"-"`
+	Features      Features                `json:"url_features"`
+	CommandGroups map[string]CommandGroup `json:"command_groups"`
 }
 
 type Features struct {
@@ -25,6 +26,12 @@ type Features struct {
 	EnableGithubCheck     bool `json:"enable_github_check"`
 	EnableIMDbCheck       bool `json:"enable_imdb_check"`
 	EnableVirusTotalCheck bool `json:"enable_virus_total_check"`
+}
+
+type CommandGroup struct {
+	Commands        []string `json:"commands"`
+	AllowedChannels []string `json:"allowed_channels"`
+	Role            string   `json:"role"`
 }
 
 // Function to load the configuration from a file

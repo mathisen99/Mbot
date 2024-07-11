@@ -11,34 +11,51 @@ This project is a fun exploration into the world of IRC, and is currently still 
 ## Setup
 
 1. Clone the repository:
-    ```sh
-    git clone https://github.com/mathisen99/Mbot.git
-    cd Mbot
-    ```
+
+   ```sh
+   git clone https://github.com/mathisen99/Mbot.git
+   cd Mbot
+   ```
 
 2. Rename the example configuration file:
-    ```sh
-    mv data/config_example.json data/config.json
-    ```
+
+   ```sh
+   mv data/config_example.json data/config.json
+   ```
 
 3. Edit `data/config.json` with your preferred text editor and fill in the configuration details:
-    ```json
-    {
-      "server": "irc.libera.chat",
-      "port": "6697",
-      "nick": "BotNickname",
-      "channels": ["#channel1", "#channel2"],
-      "nick_serv_user": "NickServUser",
-      "nick_serv_pass": "NickServPass",
-      "use_tls": true,
-      "url_features": {
-        "enable_youtube_check": true,
-        "enable_wikipedia_check": true,
-        "enable_github_check": true,
-        "enable_imdb_check": true,
-        "enable_virus_total_check": true
-      }
-    }
+
+````json
+        {
+        "server": "irc.libera.chat",
+        "port": "6697",
+        "nick": "ExampleNick",
+        "channels": ["#examplechannel"],
+        "nick_serv_user": "ExampleNickServUser",
+        "nick_serv_pass": "ExampleNickServPass",
+        "use_tls": true,
+        "url_features": {
+            "enable_youtube_check": true,
+            "enable_wikipedia_check": false,
+            "enable_github_check": true,
+            "enable_imdb_check": true,
+            "enable_virus_total_check": false
+        },
+        "command_groups": {
+            "owner_commands": {
+            "commands": ["!shutdown"],
+            "allowed_channels": ["#examplechannel"]
+            },
+            "admin_commands": {
+            "commands": ["!adduser", "!deluser", "!op", "!deop", "!voice", "!devoice", "!kick", "!ban", "!unban", "!invite"],
+            "allowed_channels": ["#examplechannel"]
+            },
+            "general_commands": {
+            "commands": ["!hello", "!join", "!part", "!topic", "!nick", "!whois", "!list", "!quit", "!names"],
+            "allowed_channels": ["#examplechannel"]
+            }
+        }
+        }
     ```
 
     - `server`: The address of the IRC server you want to connect to (e.g., `irc.libera.chat`).
@@ -101,7 +118,7 @@ The users are stored in a `users.json` file located in the `data` directory. Bel
         "role": "Owner"
     }
 ]
-```
+````
 
 ## API Keys
 

@@ -82,7 +82,7 @@ func AddUserCommand(connection *ircevent.Connection, sender, target, message str
 	connection.SendRaw(fmt.Sprintf("WHOIS %s", nick))
 }
 
-// Register the command
-func init() {
-	bot.RegisterCommand("!adduser", AddUserCommand, bot.RoleAdmin)
+// RegisterAddUserCommand registers the !adduser command
+func RegisterAddUserCommand() {
+	bot.RegisterCommand("!adduser", AddUserCommand, bot.RoleOwner)
 }
