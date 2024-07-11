@@ -52,17 +52,6 @@ func NickCommand(connection *ircevent.Connection, sender, target, message string
 	connection.Send("NICK", newNick)
 }
 
-// Handler for the !whois command
-func WhoisCommand(connection *ircevent.Connection, sender, target, message string, users map[string]bot.User) {
-	parts := strings.Fields(message)
-	if len(parts) < 2 {
-		connection.Privmsg(target, "Usage: !whois <nickname>")
-		return
-	}
-	nickname := parts[1]
-	connection.Send("WHOIS", nickname)
-}
-
 // Handler for the !invite command
 func InviteCommand(connection *ircevent.Connection, sender, target, message string, users map[string]bot.User) {
 	parts := strings.Fields(message)
@@ -156,30 +145,10 @@ func UnbanCommand(connection *ircevent.Connection, sender, target, message strin
 	connection.Send("MODE", target, "-b", nickname)
 }
 
-// Handler for the !list command
-func ListCommand(connection *ircevent.Connection, sender, target, message string, users map[string]bot.User) {
-	connection.Send("LIST")
-}
-
-// Handler for the !quit command
-func QuitCommand(connection *ircevent.Connection, sender, target, message string, users map[string]bot.User) {
-	connection.Quit()
-}
-
-// Handler for the !names command
-func NamesCommand(connection *ircevent.Connection, sender, target, message string, users map[string]bot.User) {
-	parts := strings.Fields(message)
-	if len(parts) < 2 {
-		connection.Send("NAMES", target)
-	} else {
-		channel := parts[1]
-		connection.Send("NAMES", channel)
-	}
-}
-
 // Handler for the !shutdown command
 func ShutdownCommand(connection *ircevent.Connection, sender, target, message string, users map[string]bot.User) {
 	connection.Quit()
+	bot.ShutdownBot(connection)
 }
 
 // RegisterBaseCommands registers all basic commands
@@ -188,7 +157,6 @@ func RegisterBaseCommands() {
 	bot.RegisterCommand("!part", PartCommand, bot.RoleEveryone)
 	bot.RegisterCommand("!topic", TopicCommand, bot.RoleAdmin)
 	bot.RegisterCommand("!nick", NickCommand, bot.RoleEveryone)
-	bot.RegisterCommand("!whois", WhoisCommand, bot.RoleEveryone)
 	bot.RegisterCommand("!invite", InviteCommand, bot.RoleAdmin)
 	bot.RegisterCommand("!op", OpCommand, bot.RoleAdmin)
 	bot.RegisterCommand("!deop", DeopCommand, bot.RoleAdmin)
@@ -197,8 +165,5 @@ func RegisterBaseCommands() {
 	bot.RegisterCommand("!kick", KickCommand, bot.RoleAdmin)
 	bot.RegisterCommand("!ban", BanCommand, bot.RoleAdmin)
 	bot.RegisterCommand("!unban", UnbanCommand, bot.RoleAdmin)
-	bot.RegisterCommand("!list", ListCommand, bot.RoleEveryone)
-	bot.RegisterCommand("!quit", QuitCommand, bot.RoleEveryone)
-	bot.RegisterCommand("!names", NamesCommand, bot.RoleEveryone)
 	bot.RegisterCommand("!shutdown", ShutdownCommand, bot.RoleOwner)
 }

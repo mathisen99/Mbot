@@ -41,15 +41,15 @@ This project is a fun exploration into the world of IRC, and is currently still 
       },
       "command_groups": {
         "owner_commands": {
-          "commands": ["!shutdown"],
+          "commands": ["!shutdown", "!nick"],
           "allowed_channels": ["#examplechannel"]
         },
         "admin_commands": {
-          "commands": ["!adduser", "!deluser", "!op", "!deop", "!voice", "!devoice", "!kick", "!ban", "!unban", "!invite"],
+          "commands": ["!adduser", "!deluser", "!op", "!deop", "!voice", "!devoice", "!kick", "!ban", "!unban", "!invite", "!topic", "!join", "!part"],
           "allowed_channels": ["#examplechannel"]
         },
         "general_commands": {
-          "commands": ["!hello", "!join", "!part", "!topic", "!nick", "!whois", "!list", "!quit", "!names"],
+          "commands": ["!hello"],
           "allowed_channels": ["#examplechannel"]
         }
       }

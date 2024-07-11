@@ -22,16 +22,16 @@ func handleChannelMessage(connection *Connection, sender, target, message string
 		}
 	}
 
+	// Check for commands
+	if strings.HasPrefix(message, "!") {
+		handleCommand(connection.Connection, sender, target, message, users)
+	}
+
 	// Check if the message mentions the bot's nickname
 	if strings.Contains(message, botNick) {
 		nickname := ExtractNickname(sender)
 		response := "Hello, " + nickname + "!"
 		connection.Privmsg(target, response)
 		return
-	}
-
-	// Check for commands
-	if strings.HasPrefix(message, "!") {
-		handleCommand(connection.Connection, sender, target, message, users)
 	}
 }
