@@ -100,7 +100,6 @@ The following roles are supported:
 - `Owner`: Highest privilege level.
 - `Admin`: Administrative privileges.
 - `Trusted`: Trusted user.
-- `Regular`: Regular user.
 - `BadBoy`: Restricted user.
 
 ### Example `users.json`
