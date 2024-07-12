@@ -18,21 +18,30 @@ type CommandHandler func(connection *ircevent.Connection, sender, target, messag
 // Command struct to hold the handler, required role, and group/allowed channels
 type Command struct {
 	Handler         CommandHandler
-	RequiredRole    int
 	AllowedChannels []string
+	RequiredRole    string
+}
+
+// Role levels
+var roleMapping = map[string]int{
+	"everyone": RoleEveryone,
+	"badboy":   RoleBadBoy,
+	"trusted":  RoleTrusted,
+	"admin":    RoleAdmin,
+	"owner":    RoleOwner,
 }
 
 // Map of commands to their handlers and required roles
 var commands = map[string]Command{}
 
-func RegisterCommand(cmd string, handler CommandHandler, requiredRole int) {
+func RegisterCommand(cmd string, handler CommandHandler) {
 	for _, group := range ConfigData.CommandGroups {
 		for _, command := range group.Commands {
 			if command == cmd {
 				commands[cmd] = Command{
 					Handler:         handler,
-					RequiredRole:    requiredRole,
 					AllowedChannels: group.AllowedChannels,
+					RequiredRole:    group.Role,
 				}
 				return
 			}
@@ -74,7 +83,14 @@ func handleCommand(connection *ircevent.Connection, sender, target, message stri
 			connection.Privmsg(target, "You do not have permission to execute this command.")
 			return
 		}
-		if userRoleLevel >= command.RequiredRole {
+
+		requiredRoleLevel, ok := roleMapping[command.RequiredRole]
+		if !ok {
+			connection.Privmsg(target, "Invalid role specified for this command.")
+			return
+		}
+
+		if userRoleLevel >= requiredRoleLevel {
 			command.Handler(connection, sender, target, trimmedMessage, users)
 		} else {
 			connection.Privmsg(target, "You do not have permission to execute this command.")

@@ -7,7 +7,7 @@ import (
 )
 
 // Handler for the !hello command
-func HelloCommand(connection *ircevent.Connection, sender, target, message string, users map[string]bot.User) {
+func HelloCommand2(connection *ircevent.Connection, sender, target, message string, users map[string]bot.User) {
 	nickname := bot.ExtractNickname(sender)
 	connection.Privmsg(target, "Hello, "+nickname+"!")
 
@@ -17,6 +17,6 @@ func HelloCommand(connection *ircevent.Connection, sender, target, message strin
 }
 
 // RegisterHelloCommand registers the !hello command
-func RegisterHelloCommand() {
-	bot.RegisterCommand("!hello", HelloCommand)
+func RegisterHello2Command() {
+	bot.RegisterCommand("!hello2", HelloCommand)
 }

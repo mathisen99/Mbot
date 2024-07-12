@@ -2,16 +2,30 @@ package bot
 
 import (
 	"mbot/config"
+	"sync"
 
 	"github.com/ergochat/irc-go/ircevent"
 	"github.com/ergochat/irc-go/ircmsg"
 	"github.com/fatih/color"
 )
 
+// Bot is the main bot struct
 type Bot struct {
 	Connection *Connection
 	Config     *config.Config
 }
+
+// Connection is a wrapper around ircevent.Connection
+type Connection struct {
+	*ircevent.Connection
+	Config *config.Config
+}
+
+// PendingWhois stores pending WHOIS requests
+var (
+	PendingWhois = make(map[string]func(string))
+	WhoisMu      sync.Mutex
+)
 
 // NewBot creates a new bot instance
 func NewBot(cfg *config.Config, users map[string]User) *Bot {

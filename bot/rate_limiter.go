@@ -23,6 +23,7 @@ type RateLimiter struct {
 	suspensionMessageCooldown time.Duration
 }
 
+// NewRateLimiter creates a new RateLimiter instance
 func NewRateLimiter() *RateLimiter {
 	return &RateLimiter{
 		userTimestamps:            make(map[string][]time.Time),
@@ -34,6 +35,7 @@ func NewRateLimiter() *RateLimiter {
 	}
 }
 
+// AllowCommand checks if a user is allowed to send a command
 func (rl *RateLimiter) AllowCommand(user string) bool {
 	rl.mu.Lock()
 	defer rl.mu.Unlock()
@@ -53,7 +55,6 @@ func (rl *RateLimiter) AllowCommand(user string) bool {
 		return false
 	}
 
-	// Check if the user is in shutdown
 	if shutdown, exists := rl.shutdowns[user]; exists {
 		if now.Before(shutdown) {
 			return false
@@ -61,7 +62,6 @@ func (rl *RateLimiter) AllowCommand(user string) bool {
 		delete(rl.shutdowns, user)
 	}
 
-	// Check if the user is in cooldown
 	if cooldown, exists := rl.cooldowns[user]; exists {
 		if now.Before(cooldown) {
 			rl.shutdowns[user] = now.Add(shutdownPeriod)
@@ -78,7 +78,6 @@ func (rl *RateLimiter) AllowCommand(user string) bool {
 		return true
 	}
 
-	// Filter out timestamps older than one second
 	validTimestamps := []time.Time{}
 	for _, timestamp := range timestamps {
 		if now.Sub(timestamp) < time.Second {
@@ -87,7 +86,6 @@ func (rl *RateLimiter) AllowCommand(user string) bool {
 	}
 	rl.userTimestamps[user] = validTimestamps
 
-	// Check per-second limit
 	if len(validTimestamps) >= maxCommandsPerSecond {
 		rl.cooldowns[user] = now.Add(cooldownPeriod)
 		return false
@@ -98,6 +96,7 @@ func (rl *RateLimiter) AllowCommand(user string) bool {
 	return true
 }
 
+// GetCooldownRemaining returns the remaining cooldown time for a user
 func (rl *RateLimiter) GetCooldownRemaining(user string) time.Duration {
 	rl.mu.Lock()
 	defer rl.mu.Unlock()
@@ -109,6 +108,7 @@ func (rl *RateLimiter) GetCooldownRemaining(user string) time.Duration {
 	return 0
 }
 
+// GetShutdownRemaining returns the remaining shutdown time for a user
 func (rl *RateLimiter) GetShutdownRemaining(user string) time.Duration {
 	rl.mu.Lock()
 	defer rl.mu.Unlock()
@@ -120,6 +120,7 @@ func (rl *RateLimiter) GetShutdownRemaining(user string) time.Duration {
 	return 0
 }
 
+// CanSendSuspensionMessage checks if a user is allowed to send a suspension message
 func (rl *RateLimiter) CanSendSuspensionMessage(user string) bool {
 	rl.mu.Lock()
 	defer rl.mu.Unlock()
@@ -134,6 +135,7 @@ func (rl *RateLimiter) CanSendSuspensionMessage(user string) bool {
 	return true
 }
 
+// FormatDuration formats a duration in a human-readable format
 func FormatDuration(d time.Duration) string {
 	if d < time.Second {
 		return fmt.Sprintf("%d milliseconds", d.Milliseconds())

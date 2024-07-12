@@ -121,7 +121,6 @@ func HandleIMDbLink(connection *Connection, target, url string) {
 
 // HandleVirusTotalLink processes links using VirusTotal
 func HandleVirusTotalLink(connection *Connection, sender, target, url string) {
-	// check that API key is set
 	if os.Getenv("VIRUSTOTAL_API_KEY") == "" {
 		color.Red(">> VirusTotal API key is not set")
 		connection.Privmsg(target, "VirusTotal API key is not set. Please set it in the environment variable VIRUSTOTAL_API_KEY. or disable the feature in the configuration file.")

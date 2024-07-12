@@ -16,21 +16,20 @@ import (
 
 // UserRoles is a map of user roles to their respective values
 var UserRoles = map[string]int{
-	"Owner":   RoleOwner,
-	"Admin":   RoleAdmin,
-	"Trusted": RoleTrusted,
-	"Regular": RoleRegular,
-	"BadBoy":  RoleBadBoy,
+	"Owner":    RoleOwner,
+	"Admin":    RoleAdmin,
+	"Trusted":  RoleTrusted,
+	"Everyone": RoleEveryone,
+	"BadBoy":   RoleBadBoy,
 }
 
 // Role levels
 const (
 	RoleEveryone = 0
-	RoleBadBoy   = -1
-	RoleRegular  = 2
+	RoleBadBoy   = -10
 	RoleTrusted  = 3
-	RoleAdmin    = 4
-	RoleOwner    = 5
+	RoleAdmin    = 5
+	RoleOwner    = 10
 )
 
 // global users map
@@ -144,7 +143,6 @@ func GetUserRoleLevel(users map[string]User, hostmask string) int {
 
 // AddOwnerPrompt asks for the owner's nick and adds the owner to the users map
 func AddOwnerPrompt(conn *Connection, users map[string]User) {
-	// Ask the user what nick the owner is on the network
 	color.Cyan("=============================== NO OWNER FOUND ===============================")
 	color.Red("No owner was found in the users.json file. Please set an owner.")
 	color.Red("The bot will shut down if no owner is set within 1 minute after connecting.")
@@ -157,17 +155,13 @@ func AddOwnerPrompt(conn *Connection, users map[string]User) {
 	var setupPassword string
 	fmt.Scanln(&setupPassword)
 
-	// do a WHOIS on the nick to get the hostmask
 	conn.SendRaw(fmt.Sprintf("WHOIS %s", ownerNick))
 
-	// Register a callback to handle the WHOIS response
 	conn.AddCallback("311", func(e ircmsg.Message) {
-		// 311 is the RPL_WHOISUSER response
 		if len(e.Params) >= 5 {
 			user := e.Params[2]
 			host := e.Params[3]
 
-			// Check if the user already has a tilde and format accordingly
 			var hostmask string
 			if user[0] == '~' {
 				hostmask = fmt.Sprintf("%s@%s", user, host)
@@ -175,24 +169,18 @@ func AddOwnerPrompt(conn *Connection, users map[string]User) {
 				hostmask = fmt.Sprintf("~%s@%s", user, host)
 			}
 
-			// Create the owner user
 			owner := User{
 				Hostmask: hostmask,
 				Role:     "Owner",
 			}
 
-			// Send request to confirm Setup password to the owner
 			conn.Privmsg(ownerNick, "Hey! If you know me, spill the Setup password. If not, no worries—just laugh and pretend you never saw this. Bot out! 🤖")
 
-			// Create a channel to signal when the password is confirmed
 			passwordConfirmed := make(chan bool)
 
-			// Declare the variable outside the callback to ensure it's in scope
 			var privmsgCallbackID ircevent.CallbackID
 
-			// Temporary callback to handle the password confirmation response
 			privmsgCallbackID = conn.AddCallback("PRIVMSG", func(e ircmsg.Message) {
-				// Parse the nick from the Source
 				sourceParts := strings.SplitN(e.Source, "!", 2)
 				nick := sourceParts[0]
 
@@ -202,7 +190,6 @@ func AddOwnerPrompt(conn *Connection, users map[string]User) {
 					color.Green(">> Setup password confirmed")
 					conn.Privmsg(ownerNick, "Setup password confirmed. You are now the owner of the bot.")
 
-					// Add the owner to the users map
 					err := AddUser(users, owner)
 					if err != nil {
 						color.Red(">> Failed to add owner: %v", err)
@@ -211,38 +198,32 @@ func AddOwnerPrompt(conn *Connection, users map[string]User) {
 					color.Green(">> Owner set successfully:")
 					color.Green(">> Hostmask: %s", hostmask)
 
-					// Signal that the password was confirmed
 					passwordConfirmed <- true
 
-					// Close the channel to signal the timeout goroutine
 					close(passwordConfirmed)
 
-					// Remove the temporary callback
 					conn.RemoveCallback(privmsgCallbackID)
 				} else {
 					color.Red(">> Setup password incorrect")
 					conn.Privmsg(ownerNick, "Setup password was incorrect. Bye!")
 
-					// Remove the temporary callback
 					conn.RemoveCallback(privmsgCallbackID)
 
 					// Shutdown the bot
 					log.Println("Sending shutdown signal")
-					syscall.Kill(syscall.Getpid(), syscall.SIGTERM) // Trigger shutdown programmatically
+					syscall.Kill(syscall.Getpid(), syscall.SIGTERM)
 				}
 			})
 
-			// Start a timer for 1 minute
+			// Start a timer for 1 minute to shut down if no response is received
 			go func() {
 				select {
 				case <-time.After(1 * time.Minute):
-					// Timer expired, no password received
 					color.Red(">> No response within 1 minute, shutting down.")
 					conn.Privmsg(ownerNick, "No response within 1 minute. Shutting down. Bye!")
 					conn.RemoveCallback(privmsgCallbackID)
-					syscall.Kill(syscall.Getpid(), syscall.SIGTERM) // Trigger shutdown programmatically
+					syscall.Kill(syscall.Getpid(), syscall.SIGTERM)
 				case <-passwordConfirmed:
-					// Password was confirmed, stop the timer
 					return
 				}
 			}()
@@ -255,18 +236,17 @@ func IsUserOwner(users map[string]User, hostmask string) bool {
 	return UserRoles[GetUserRole(users, hostmask)] == RoleOwner
 }
 
+// IsUserAdmin checks if a user is an admin
 func IsUserAdmin(users map[string]User, hostmask string) bool {
 	return UserRoles[GetUserRole(users, hostmask)] >= RoleAdmin
 }
 
+// IsUserTrusted checks if a user is trusted
 func IsUserTrusted(users map[string]User, hostmask string) bool {
 	return UserRoles[GetUserRole(users, hostmask)] >= RoleTrusted
 }
 
-func IsUserRegular(users map[string]User, hostmask string) bool {
-	return UserRoles[GetUserRole(users, hostmask)] >= RoleRegular
-}
-
+// IsUserBadBoy checks if a user is a troll :) lol
 func IsUserBadBoy(users map[string]User, hostmask string) bool {
 	return UserRoles[GetUserRole(users, hostmask)] == RoleBadBoy
 }

@@ -73,37 +73,3 @@ func SaveConfig(config *Config, filePath string) error {
 
 	return nil
 }
-
-// Function to load the features configuration from a file
-func LoadFeatures(filePath string) (*Features, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return nil, fmt.Errorf("error opening features file: %w", err)
-	}
-	defer file.Close()
-
-	features := &Features{}
-	decoder := json.NewDecoder(file)
-	if err := decoder.Decode(features); err != nil {
-		return nil, fmt.Errorf("error decoding features file: %w", err)
-	}
-
-	return features, nil
-}
-
-// Function to save the features configuration to a file
-func SaveFeatures(features *Features, filePath string) error {
-	file, err := os.Create(filePath)
-	if err != nil {
-		return fmt.Errorf("error creating features file: %w", err)
-	}
-	defer file.Close()
-
-	encoder := json.NewEncoder(file)
-	encoder.SetIndent("", "  ")
-	if err := encoder.Encode(features); err != nil {
-		return fmt.Errorf("error encoding features file: %w", err)
-	}
-
-	return nil
-}

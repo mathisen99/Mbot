@@ -42,15 +42,23 @@ This project is a fun exploration into the world of IRC, and is currently still 
       "command_groups": {
         "owner_commands": {
           "commands": ["!shutdown", "!nick"],
-          "allowed_channels": ["#examplechannel"]
+          "allowed_channels": ["#examplechannel"],
+          "role": "owner"
         },
         "admin_commands": {
           "commands": ["!adduser", "!deluser", "!op", "!deop", "!voice", "!devoice", "!kick", "!ban", "!unban", "!invite", "!topic", "!join", "!part"],
-          "allowed_channels": ["#examplechannel"]
+          "allowed_channels": ["#examplechannel"],
+          "role": "admin"
+        },
+        "trusted_commands": {
+          "commands": ["!trustedcmd1", "!trustedcmd2"],
+          "allowed_channels": ["#examplechannel"],
+          "role": "trusted"
         },
         "general_commands": {
           "commands": ["!hello"],
-          "allowed_channels": ["#examplechannel"]
+          "allowed_channels": ["#examplechannel"],
+          "role": "everyone"
         }
       }
     }
@@ -69,9 +77,10 @@ This project is a fun exploration into the world of IRC, and is currently still 
         - `enable_github_check`: Enable or disable GitHub link handling.
         - `enable_imdb_check`: Enable or disable IMDb link handling.
         - `enable_virus_total_check`: Enable or disable VirusTotal link checking.
-    - `command_groups`: A block containing groups of commands with their respective allowed channels.
+    - `command_groups`: A block containing groups of commands with their respective allowed channels and roles.
         - `owner_commands`: Commands available to owners.
         - `admin_commands`: Commands available to admins.
+        - `trusted_commands`: Commands available to trusted users.
         - `general_commands`: Commands available to everyone.
 
     
