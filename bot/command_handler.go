@@ -22,15 +22,6 @@ type Command struct {
 	RequiredRole    string
 }
 
-// Role levels
-var roleMapping = map[string]int{
-	"everyone": RoleEveryone,
-	"badboy":   RoleBadBoy,
-	"trusted":  RoleTrusted,
-	"admin":    RoleAdmin,
-	"owner":    RoleOwner,
-}
-
 // Map of commands to their handlers and required roles
 var commands = map[string]Command{}
 
@@ -84,7 +75,7 @@ func handleCommand(connection *ircevent.Connection, sender, target, message stri
 			return
 		}
 
-		requiredRoleLevel, ok := roleMapping[command.RequiredRole]
+		requiredRoleLevel, ok := UserRoles[command.RequiredRole]
 		if !ok {
 			connection.Privmsg(target, "Invalid role specified for this command.")
 			return

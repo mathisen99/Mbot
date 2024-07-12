@@ -20,11 +20,21 @@ func AddUserCommand(connection *ircevent.Connection, sender, target, message str
 		return
 	}
 	nick := parts[1]
-	role := parts[2]
+	inputRole := parts[2]
 
-	if _, exists := bot.UserRoles[role]; !exists {
+	// Map for valid roles to make it case-insensitive for better user experience
+	validRoles := map[string]string{
+		"owner":   "Owner",
+		"admin":   "Admin",
+		"trusted": "Trusted",
+		"regular": "Regular",
+		"badboy":  "BadBoy",
+	}
+
+	role, exists := validRoles[strings.ToLower(inputRole)]
+	if !exists {
 		connection.Privmsg(target, "Invalid role. Valid roles are: Owner, Admin, Trusted, Regular, BadBoy")
-		color.Red(">> Invalid role: %s", role)
+		color.Red(">> Invalid role: %s", inputRole)
 		return
 	}
 
