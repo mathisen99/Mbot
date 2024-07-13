@@ -24,8 +24,9 @@ Thumbs.db
 # Log files
 *.log
 
-# Data folder
+# Data files
 /data/config.json
+/data/users.json
 
 # enviorment file
 .env
