@@ -186,9 +186,11 @@ func AddOwnerPrompt(conn *Connection, users map[string]User) {
 
 				color.Yellow(">> Received message from %s: %s", nick, e.Params[1])
 
-				if nick == ownerNick && len(e.Params) > 1 && e.Params[1] == setupPassword {
+				if strings.EqualFold(nick, ownerNick) && len(e.Params) > 1 && e.Params[1] == setupPassword {
 					color.Green(">> Setup password confirmed")
 					conn.Privmsg(ownerNick, "Setup password confirmed. You are now the owner of the bot.")
+					conn.Privmsg(ownerNick, "Run the command !managecmd setup #channel in your channel where the bot is present to set up all the commands.")
+					conn.Privmsg(ownerNick, "If you don't run the setup, no other commands will work except for the !managecmd command.")
 
 					err := AddUser(users, owner)
 					if err != nil {

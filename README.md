@@ -38,28 +38,6 @@ This project is a fun exploration into the world of IRC, and is currently still 
         "enable_github_check": true,
         "enable_imdb_check": true,
         "enable_virus_total_check": false
-      },
-      "command_groups": {
-        "owner_commands": {
-          "commands": ["!shutdown", "!nick"],
-          "allowed_channels": ["#examplechannel"],
-          "role": "owner"
-        },
-        "admin_commands": {
-          "commands": ["!adduser", "!deluser", "!op", "!deop", "!voice", "!devoice", "!kick", "!ban", "!unban", "!invite", "!topic", "!join", "!part"],
-          "allowed_channels": ["#examplechannel"],
-          "role": "admin"
-        },
-        "trusted_commands": {
-          "commands": ["!trustedcmd1", "!trustedcmd2"],
-          "allowed_channels": ["#examplechannel"],
-          "role": "trusted"
-        },
-        "general_commands": {
-          "commands": ["!hello"],
-          "allowed_channels": ["#examplechannel"],
-          "role": "everyone"
-        }
       }
     }
     ````
@@ -77,13 +55,22 @@ This project is a fun exploration into the world of IRC, and is currently still 
         - `enable_github_check`: Enable or disable GitHub link handling.
         - `enable_imdb_check`: Enable or disable IMDb link handling.
         - `enable_virus_total_check`: Enable or disable VirusTotal link checking.
-    - `command_groups`: A block containing groups of commands with their respective allowed channels and roles.
-        - `owner_commands`: Commands available to owners.
-        - `admin_commands`: Commands available to admins.
-        - `trusted_commands`: Commands available to trusted users.
-        - `general_commands`: Commands available to everyone.
 
-    
+4. Rename the example command configuration file:
+    ```sh
+    mv data/command_config_example.json data/command_config.json
+    ```
+
+5. Run the bot:
+    ```sh
+    go run main.go
+    ```
+
+6. Set up default permissions for all commands. This step is crucial to enable all other commands. Use the `!managecmd setup <channel>` command in IRC:
+    ```irc
+    !managecmd setup #newchannel
+    ```
+
 ## User Management
 
 ### Managing Users
@@ -105,6 +92,7 @@ The following roles are supported:
 ### Example `users.json`
 
 The users are stored in a `users.json` file located in the `data` directory. Below is an example structure:
+
 
 ```json
 [

@@ -3,11 +3,18 @@ package main
 import (
 	"log"
 	"mbot/bot"
-	"mbot/commands" // Import the commands package
+	"mbot/commands"
 	"mbot/config"
 	"os"
 	"os/signal"
 	"syscall"
+)
+
+const (
+	// Config paths
+	ConfigPath        = "./data/config.json"
+	CommandConfigPath = "./data/command_permissions.json"
+	UserDataPath      = "./data/users.json"
 )
 
 func main() {
@@ -15,17 +22,25 @@ func main() {
 	bot.LoadEnv()
 
 	// Load configuration
-	cfg, err := config.LoadConfig("./data/config.json")
+	cfg, err := config.LoadConfig(ConfigPath)
 	if err != nil {
 		os.Exit(1)
 	}
 	bot.ConfigData = cfg
 
+	// Load command configuration
+	cmdCfg, err := config.LoadCommandConfig(CommandConfigPath)
+	if err != nil {
+		os.Exit(1)
+	}
+	bot.CommandConfigData = cmdCfg
+
 	// Register commands after ConfigData is initialized
 	commands.RegisterAllCommands()
+	commands.RegisterManageCommand(cmdCfg, CommandConfigPath)
 
 	// Load users
-	bot.Users, err = bot.LoadUsersAtStart("./data/users.json")
+	bot.Users, err = bot.LoadUsersAtStart(UserDataPath)
 	if err != nil {
 		os.Exit(1)
 	}

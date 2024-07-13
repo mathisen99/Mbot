@@ -12,27 +12,5 @@
     "enable_github_check": true,
     "enable_imdb_check": true,
     "enable_virus_total_check": false
-  },
-  "command_groups": {
-    "owner_commands": {
-      "commands": ["!shutdown", "!nick"],
-      "allowed_channels": ["#examplechannel"],
-      "role": "owner"
-    },
-    "admin_commands": {
-      "commands": ["!adduser", "!deluser", "!op", "!deop", "!voice", "!devoice", "!kick", "!ban", "!unban", "!invite", "!topic", "!join", "!part"],
-      "allowed_channels": ["#examplechannel"],
-      "role": "admin"
-    },
-    "trusted_commands": {
-      "commands": ["!hello2"],
-      "allowed_channels": ["#examplechannel"],
-      "role": "trusted"
-    },
-    "general_commands": {
-      "commands": ["!hello"],
-      "allowed_channels": ["#examplechannel"],
-      "role": "everyone"
-    }
   }
 }

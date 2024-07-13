@@ -2,15 +2,15 @@ package bot
 
 import (
 	"fmt"
-	"strings"
-
 	"mbot/config"
+	"strings"
 
 	"github.com/ergochat/irc-go/ircevent"
 )
 
 var rateLimiter = NewRateLimiter()
 var ConfigData *config.Config
+var CommandConfigData *config.CommandConfig
 
 // CommandHandler is a type alias for functions that handle commands
 type CommandHandler func(connection *ircevent.Connection, sender, target, message string, users map[string]User)
@@ -25,23 +25,45 @@ type Command struct {
 // Map of commands to their handlers and required roles
 var commands = map[string]Command{}
 
+// RegisterCommand registers a command with the bot
 func RegisterCommand(cmd string, handler CommandHandler) {
-	for _, group := range ConfigData.CommandGroups {
-		for _, command := range group.Commands {
-			if command == cmd {
-				commands[cmd] = Command{
-					Handler:         handler,
-					AllowedChannels: group.AllowedChannels,
-					RequiredRole:    group.Role,
-				}
-				return
+	if permissions, exists := CommandConfigData.Commands[cmd]; exists {
+		for _, perm := range permissions {
+			commands[cmd] = Command{
+				Handler:         handler,
+				AllowedChannels: perm.Channels,
+				RequiredRole:    perm.Role,
 			}
 		}
 	}
 }
 
+// ReloadCommandConfig reloads the command configuration from the file
+func ReloadCommandConfig(configPath string) error {
+	cmdCfg, err := config.LoadCommandConfig(configPath)
+	if err != nil {
+		return err
+	}
+	CommandConfigData = cmdCfg
+
+	// Re-register commands to reflect updated permissions
+	for cmd, command := range commands {
+		if handler := command.Handler; handler != nil {
+			RegisterCommand(cmd, handler)
+		}
+	}
+	return nil
+}
+
 // Function to handle commands
 func handleCommand(connection *ircevent.Connection, sender, target, message string, users map[string]User) {
+	// Reload the command configuration
+	err := ReloadCommandConfig("./data/command_permissions.json")
+	if err != nil {
+		connection.Privmsg(target, fmt.Sprintf("Failed to reload command configuration: %v", err))
+		return
+	}
+
 	trimmedMessage := strings.TrimSpace(message)
 	parts := strings.Fields(trimmedMessage)
 
@@ -53,6 +75,12 @@ func handleCommand(connection *ircevent.Connection, sender, target, message stri
 		nickname := ExtractNickname(sender)
 		hostmask := ExtractHostmask(sender)
 		userRoleLevel := GetUserRoleLevel(users, hostmask)
+
+		if cmd == "!managecmd" && userRoleLevel == RoleOwner {
+			// Allow !managecmd command everywhere for the Owner role
+			command.Handler(connection, sender, target, trimmedMessage, users)
+			return
+		}
 
 		if !isCommandAllowedInChannel(target, command) {
 			connection.Privmsg(target, "This command is not allowed in this channel.")
