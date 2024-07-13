@@ -8,10 +8,6 @@ This project is a fun exploration into the world of IRC, and is currently still 
 
 - Go 1.16 or later (recommended to use the latest version)
 
-## Credits
-
-- This bot uses the [ErgoChat IRC library](https://github.com/ergochat/ergo).
-
 ## Setup
 
 1. Clone the repository:
@@ -186,6 +182,9 @@ export YOUTUBE_API_KEY="your_youtube_api_key"
 export OMDb_API_KEY="your_omdb_api_key"
 export VIRUSTOTAL_API_KEY="your_virustotal_api_key"
 ```
+## Credits
+
+- This bot uses the [ErgoChat IRC library](https://github.com/ergochat/ergo).
 
 ## License
 
