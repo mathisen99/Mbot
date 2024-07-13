@@ -3,6 +3,7 @@ package bot
 import (
 	"fmt"
 	"mbot/bot/internal"
+	"mbot/config"
 	"os"
 	"strings"
 
@@ -10,9 +11,12 @@ import (
 	"github.com/fatih/color"
 )
 
+// Global variable to hold the URL configuration
+var URLConfigData *config.URLFeatures
+
 // HandleUrl processes URLs found in messages
 func HandleUrl(connection *Connection, sender, target, url string) {
-	featureConfig := connection.Config.Features
+	featureConfig := URLConfigData
 
 	switch {
 	case strings.Contains(url, "youtube.com"), strings.Contains(url, "youtu.be"):

@@ -15,13 +15,14 @@ const (
 	ConfigPath        = "./data/config.json"
 	CommandConfigPath = "./data/command_permissions.json"
 	UserDataPath      = "./data/users.json"
+	URLConfigPath     = "./data/url_config.json"
 )
 
 func main() {
 	// Load environment variables
 	bot.LoadEnv()
 
-	// Load configuration
+	// Load main configuration
 	cfg, err := config.LoadConfig(ConfigPath)
 	if err != nil {
 		os.Exit(1)
@@ -34,6 +35,13 @@ func main() {
 		os.Exit(1)
 	}
 	bot.CommandConfigData = cmdCfg
+
+	// Load URL configuration
+	urlCfg, err := config.LoadURLConfig(URLConfigPath)
+	if err != nil {
+		os.Exit(1)
+	}
+	bot.URLConfigData = urlCfg
 
 	// Register commands after ConfigData is initialized
 	commands.RegisterAllCommands()

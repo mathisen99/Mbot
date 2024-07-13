@@ -6,6 +6,7 @@ import "mbot/config"
 func RegisterAllCommands() {
 	RegisterHelloCommand()      // Hello example command
 	RegisterHello2Command()     // Hello2 example command
+	RegisterURLCommand()        // URL command to enable/disable URL features (YouTube, Wikipedia, etc.)
 	RegisterBaseCommands()      // Base commands (op, deop, kick, etc.)
 	RegisterAddUserCommand()    // AddUser command (Used to add users to the bot)
 	RegisterRemoveUserCommand() // RemoveUser command (Used to remove users from the bot)
@@ -17,6 +18,9 @@ func GetDefaultPermissions(channel string) map[string][]config.CommandPermission
 		// User management commands
 		"!adduser": {{Role: "Admin", Channels: []string{channel}}},
 		"!deluser": {{Role: "Admin", Channels: []string{channel}}},
+
+		// URL command
+		"!url": {{Role: "Admin", Channels: []string{channel}}},
 
 		// Base commands
 		"!op":      {{Role: "Admin", Channels: []string{channel}}},
@@ -30,7 +34,9 @@ func GetDefaultPermissions(channel string) map[string][]config.CommandPermission
 		"!topic":   {{Role: "Admin", Channels: []string{channel}}},
 		"!join":    {{Role: "Admin", Channels: []string{channel}}},
 		"!part":    {{Role: "Admin", Channels: []string{channel}}},
-		"!hello":   {{Role: "Everyone", Channels: []string{channel}}},
+
+		// Example command
+		"!hello": {{Role: "Everyone", Channels: []string{channel}}},
 
 		// Owner commands
 		"!shutdown":  {{Role: "Owner", Channels: []string{channel}}},
@@ -38,6 +44,6 @@ func GetDefaultPermissions(channel string) map[string][]config.CommandPermission
 		"!managecmd": {{Role: "Owner", Channels: []string{channel}}},
 
 		// Trusted commands
-		"!hello2": {{Role: "Trusted", Channels: []string{channel}}},
+		"!hello2": {{Role: "Trusted", Channels: []string{channel}}}, // Example command for testing purposes
 	}
 }

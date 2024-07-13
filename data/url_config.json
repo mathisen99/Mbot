@@ -1,0 +1,7 @@
+{
+  "enable_youtube_check": true,
+  "enable_wikipedia_check": false,
+  "enable_github_check": true,
+  "enable_imdb_check": true,
+  "enable_virus_total_check": true
+}
