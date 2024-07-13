@@ -21,86 +21,44 @@ This project is a fun exploration into the world of IRC, and is currently still 
     mv data/config_example.json data/config.json
     ```
 
-3. Edit `data/config.json` with your preferred text editor and fill in the configuration details:
+3. Run this command in the "main" channel the bot and you are present.
+   This sets up all default permissions for the specified channel.
+```sh
+!managecmd setup #ChannelName
+```
+### Examples how to use the managecmd command
+ 
+- `!managecmd edit <command> <role> <channels...>`
+Edits the specified command to be allowed for the given role in the listed channels.
 
-    ````json
-    {
-      "server": "irc.libera.chat",
-      "port": "6697",
-      "nick": "ExampleNick",
-      "channels": ["#examplechannel"],
-      "nick_serv_user": "ExampleNickServUser",
-      "nick_serv_pass": "ExampleNickServPass",
-      "use_tls": true
-    }
-    ````
+**Example:** `!managecmd edit !hello Admin #channel1 #channel2`
 
-    - `server`: The address of the IRC server you want to connect to (e.g., `irc.libera.chat`).
-    - `port`: The port number for the IRC server (usually `6667` for non-TLS, `6697` for TLS).
-    - `nick`: The nickname the bot will use on the IRC server.
-    - `channels`: A list of channels the bot should join upon connecting (e.g., `["#channel1", "#channel2"]`).
-    - `nick_serv_user`: NickServ username, if your IRC server requires NickServ authentication.
-    - `nick_serv_pass`: NickServ password, if your IRC server requires NickServ authentication.
-    - `use_tls`: A boolean value (`true` or `false`) indicating whether to use TLS for the connection.
+- `!managecmd add <command> <role> <channels...>`
+Adds a new command with specified role and channels.
 
-4. Run the bot:
-    ```sh
-    go run main.go
-    ```
+**Example:** `!managecmd add !hello Admin #channel1 #channel2`
 
-    The first time the bot starts, if no owner is set in the `users.json` file, the bot will automatically prompt you to set an owner. This process includes the following steps:
+- `!managecmd remove <command> <role>`
+Removes the specified command for the given role.
 
-    - The bot will display a series of messages indicating that no owner was found and prompt you to enter the owner's nickname and a setup password.
-    - The bot will verify the owner's nickname and send a message to the owner to confirm the setup password.
-    - You will need to respond to the bot with the correct setup password within 1 minute.
-    - Upon successful confirmation, the owner will be added to the `users.json` file with the role of "Owner".
-    - If the password is incorrect or no response is received within 1 minute, the bot will shut down.
+**Example:** `!managecmd remove !hello Admin`
 
-    Here's what the process looks like:
+- `!managecmd list <command>`
+Lists all permissions for the specified command.
 
-    ```sh
-    =============================== NO OWNER FOUND ===============================
-    No owner was found in the users.json file. Please set an owner.
-    The bot will shut down if no owner is set within 1 minute after connecting.
-    The bot will message the owner to confirm the Setup password.
-    ==============================================================================
-    >> Please enter the nick of the owner on the network:
-    >> Please enter your Setup password:
-    ```
-
-    Ensure to follow the prompts and set up the owner properly to avoid the bot shutting down.
+**Example:** `!managecmd list !hello`
 
 
-5. Set up default permissions for all commands. **This step is crucial to enable all other commands.** If you skip this setup, no commands will work. Use the `!managecmd setup <channel>` command in IRC:
-    ```irc
-    !managecmd setup #newchannel
-    ```
-
-    This command will:
-
-    - Set up default permissions for the specified channel.
-    - Create a backup of the current configuration before making changes.
-    - Clear existing permissions for the channel.
-    - Set new default permissions for the channel.
-    - Save and reload the updated command configuration.
-    - Re-register commands to reflect updated permissions.
-
-    Example usage:
-
-    ```irc
-    !managecmd setup #examplechannel
-    ```
-
-    Make sure to run this command in the channel where the bot is present to complete the setup. **Without this step, no other commands will be functional.**
 
 ## User Management
+Users can be set to a specific role per channel. so they can have diffrent roles in diffrent channels. if no role is set users will be treated as "Everyone" role, this role is a generic one that defaults for everyone that does not have an role set.
 
 ### Managing Users
 
 You can manage users by adding or removing them using the following commands in the IRC channels the bot is in:
 
-- **Add User**: `!adduser <nickname> <role>`
-- **Remove User**: `!deluser <nickname>`
+- **Add User**: `!adduser <nickname> <role> <channel>`
+- **Remove User**: `!deluser <nickname> <channel>`
 
 ### Roles
 
@@ -111,42 +69,23 @@ The following roles are supported:
 - `Trusted`: Trusted user.
 - `BadBoy`: Restricted user.
 
-### Example `users.json`
+## Current Commands
 
-The users are stored in a `users.json` file located in the `data` directory. Below is an example structure:
-
-
-```json
-{
-    "~jane@irc/example/com/jane": {
-      "hostmask": "~jane@irc/example/com/jane",
-      "roles": {
-        "*": "Owner"
-      }
-    },
-    "~bob@irc/example/com/bob": {
-      "hostmask": "~bob@irc/example/com/bob",
-      "roles": {
-        "#general": "Trusted",
-        "#support": "Trusted"
-      }
-    },
-    "eve@irc/example/com/eve": {
-      "hostmask": "eve@irc/example/com/eve",
-      "roles": {
-        "#general": "BadBoy",
-        "#random": "BadBoy"
-      }
-    },
-    "charlie@irc/example/com/charlie": {
-      "hostmask": "charlie@irc/example/com/charlie",
-      "roles": {
-        "#admin": "Admin",
-        "#dev": "Trusted"
-      }
-    }
-  }
-```
+- `!hello` Hello example command available to everyone.
+- `!url` Enables/disables URL features (YouTube, Wikipedia, etc.) for admins.
+- `!op <user> <channel>` Ops a user in the channel, admin only.
+- `!deop <user> <channel>` Deops a user in the channel, admin only.
+- `!voice <user> <channel>` Voices a user in the channel, admin only.
+- `!devoice <user> <channel>` Devoices a user in the channel, admin only.
+- `!kick <user> <channel>` Kicks a user from the channel, admin only.
+- `!ban <user> <channel>` Bans a user from the channel, admin only.
+- `!unban <user> <channel>` Unbans a user from the channel, admin only.
+- `!invite <user> <channel>` Invites a user to the channel, admin only.
+- `!topic <new_topic> <channel>` Changes the channel topic, admin only.
+- `!join <channel>` Bot joins the specified channel, admin only.
+- `!part <channel>` Bot parts from the specified channel, admin only.
+- `!shutdown` Shuts down the bot, owner only.
+- `!nick <new_nickname>` Changes the bot's nickname, owner only.
 
 ## API Keys
 
