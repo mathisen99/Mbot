@@ -31,22 +31,22 @@ This project is a fun exploration into the world of IRC, and is currently still 
 - `!managecmd edit <command> <role> <channels...>`
 Edits the specified command to be allowed for the given role in the listed channels.
 
-**Example:** `!managecmd edit !hello Admin #channel1 #channel2`
+`!managecmd edit !hello Admin #channel1 #channel2`
 
 - `!managecmd add <command> <role> <channels...>`
 Adds a new command with specified role and channels.
 
-**Example:** `!managecmd add !hello Admin #channel1 #channel2`
+`!managecmd add !hello Admin #channel1 #channel2`
 
 - `!managecmd remove <command> <role>`
 Removes the specified command for the given role.
 
-**Example:** `!managecmd remove !hello Admin`
+`!managecmd remove !hello Admin`
 
 - `!managecmd list <command>`
 Lists all permissions for the specified command.
 
-**Example:** `!managecmd list !hello`
+`!managecmd list !hello`
 
 
 
