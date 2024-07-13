@@ -15,12 +15,16 @@ func AddUserCommand(connection *ircevent.Connection, sender, target, message str
 
 	parts := strings.Fields(message)
 	if len(parts) < 3 {
-		connection.Privmsg(target, "Usage: !adduser <nickname> <role>")
+		connection.Privmsg(target, "Usage: !adduser <nickname> <role> [<channel>]")
 		color.Red(">> Invalid command format: %s", message)
 		return
 	}
 	nick := parts[1]
 	inputRole := parts[2]
+	channel := target
+	if len(parts) == 4 {
+		channel = parts[3]
+	}
 
 	// Map for valid roles to make it case-insensitive for better user experience
 	validRoles := map[string]string{
@@ -44,7 +48,7 @@ func AddUserCommand(connection *ircevent.Connection, sender, target, message str
 		defer bot.WhoisMu.Lock()
 		if role == "Owner" {
 			for _, user := range users {
-				if user.Role == "Owner" {
+				if user.Roles["*"] == "Owner" {
 					connection.Privmsg(target, "There is already an Owner. Only one Owner is allowed.")
 					color.Red(">> Attempted to add another Owner: %s", nick)
 					return
@@ -53,39 +57,39 @@ func AddUserCommand(connection *ircevent.Connection, sender, target, message str
 		}
 
 		if existingUser, exists := users[hostmask]; exists {
-			if existingUser.Role == "Owner" {
+			if existingUser.Roles["*"] == "Owner" {
 				connection.Privmsg(target, fmt.Sprintf("User %s is the Owner and cannot be demoted.", nick))
 				color.Red(">> Attempted to demote Owner: %s", nick)
 				return
 			}
 
-			if existingUser.Role == role {
-				connection.Privmsg(target, fmt.Sprintf("User %s already has the role %s.", nick, role))
-				color.Yellow(">> User %s already has role %s", nick, role)
+			if existingUserRole, exists := existingUser.Roles[channel]; exists && existingUserRole == role {
+				connection.Privmsg(target, fmt.Sprintf("User %s already has the role %s in %s.", nick, role, channel))
+				color.Yellow(">> User %s already has role %s in %s", nick, role, channel)
 				return
 			}
 
-			users[hostmask] = bot.User{Hostmask: hostmask, Role: role}
+			users[hostmask].Roles[channel] = role
 			if err := bot.SaveUsers(users); err != nil {
 				connection.Privmsg(target, "Error updating user: "+err.Error())
 				color.Red(">> Error updating user: %s", err.Error())
 				return
 			}
 
-			color.Green(">> User %s updated to role %s", nick, role)
-			connection.Privmsg(target, fmt.Sprintf("User %s's role has been updated to %s.", nick, role))
+			color.Green(">> User %s updated to role %s in %s", nick, role, channel)
+			connection.Privmsg(target, fmt.Sprintf("User %s's role has been updated to %s in %s.", nick, role, channel))
 			return
 		}
 
-		user := bot.User{Hostmask: hostmask, Role: role}
+		user := bot.User{Hostmask: hostmask, Roles: map[string]string{channel: role}}
 		if err := bot.AddUser(users, user); err != nil {
 			connection.Privmsg(target, "Error adding user: "+err.Error())
 			color.Red(">> Error adding user: %s", err.Error())
 			return
 		}
 
-		color.Green(">> User %s added with role %s", nick, role)
-		connection.Privmsg(target, fmt.Sprintf("User %s has added %s with role %s.", nickname, nick, role))
+		color.Green(">> User %s added with role %s in %s", nick, role, channel)
+		connection.Privmsg(target, fmt.Sprintf("User %s has added %s with role %s in %s.", nickname, nick, role, channel))
 	}
 	bot.WhoisMu.Unlock()
 

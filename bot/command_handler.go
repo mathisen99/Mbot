@@ -73,7 +73,7 @@ func handleCommand(connection *ircevent.Connection, sender, target, message stri
 	if command, exists := commands[cmd]; exists {
 		nickname := ExtractNickname(sender)
 		hostmask := ExtractHostmask(sender)
-		userRoleLevel := GetUserRoleLevel(users, hostmask)
+		userRoleLevel := GetUserRoleLevel(users, hostmask, target)
 
 		if !rateLimiter.AllowCommand(nickname) {
 			if remaining := rateLimiter.GetCooldownRemaining(nickname); remaining > 0 {

@@ -1,22 +1,30 @@
-[
-    {
-        "hostmask": "~jane@irc/example/com/jane",
-        "role": "Admin"
+{
+    "~jane@irc/example/com/jane": {
+      "hostmask": "~jane@irc/example/com/jane",
+      "roles": {
+        "*": "Owner"
+      }
     },
-    {
-        "hostmask": "~bob@irc/example/com/bob",
-        "role": "Trusted"
+    "~bob@irc/example/com/bob": {
+      "hostmask": "~bob@irc/example/com/bob",
+      "roles": {
+        "#general": "Trusted",
+        "#support": "Trusted"
+      }
     },
-    {
-        "hostmask": "alice@irc/example/com/alice",
-        "role": "Regular"
+    "eve@irc/example/com/eve": {
+      "hostmask": "eve@irc/example/com/eve",
+      "roles": {
+        "#general": "BadBoy",
+        "#random": "BadBoy"
+      }
     },
-    {
-        "hostmask": "eve@irc/example/com/eve",
-        "role": "BadBoy"
-    },
-    {
-        "hostmask": "charlie@irc/example/com/charlie",
-        "role": "Owner"
+    "charlie@irc/example/com/charlie": {
+      "hostmask": "charlie@irc/example/com/charlie",
+      "roles": {
+        "#admin": "Admin",
+        "#dev": "Trusted"
+      }
     }
-]
+  }
+  

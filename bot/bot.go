@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"fmt"
 	"mbot/config"
 	"sync"
 
@@ -52,11 +53,12 @@ func NewBot(cfg *config.Config, users map[string]User) *Bot {
 	bot.Connection.AddConnectCallback(func(e ircmsg.Message) {
 		color.Green(">> Connection successful")
 
-		// Check if an owner is set in the users map
+		// Check if an owner is set in the users map during connection
 		ownerFound := false
 		for _, user := range users {
-			if user.Role == "Owner" {
+			if user.Roles["*"] == "Owner" {
 				ownerFound = true
+				fmt.Println(">> Owner found:", user.Hostmask)
 				break
 			}
 		}

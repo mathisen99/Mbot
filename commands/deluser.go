@@ -15,11 +15,15 @@ func RemoveUserCommand(connection *ircevent.Connection, sender, target, message 
 
 	parts := strings.Fields(message)
 	if len(parts) < 2 {
-		connection.Privmsg(target, "Usage: !deluser <nickname>")
+		connection.Privmsg(target, "Usage: !deluser <nickname> [<channel>]")
 		color.Red(">> Invalid command format: %s", message)
 		return
 	}
 	nick := parts[1]
+	channel := target
+	if len(parts) == 3 {
+		channel = parts[2]
+	}
 
 	bot.WhoisMu.Lock()
 	bot.PendingWhois[nick] = func(hostmask string) {
@@ -33,20 +37,27 @@ func RemoveUserCommand(connection *ircevent.Connection, sender, target, message 
 		}
 
 		if existingUser, exists := users[hostmask]; exists {
-			if existingUser.Role == "Owner" {
+			if existingUser.Roles["*"] == "Owner" {
 				connection.Privmsg(target, fmt.Sprintf("User %s is the Owner and cannot be removed.", nick))
 				color.Red(">> Attempted to remove Owner: %s", nick)
 				return
 			}
 
-			if err := bot.RemoveUser(users, hostmask); err != nil {
-				connection.Privmsg(target, "Error removing user: "+err.Error())
-				color.Red(">> Error removing user: %s", err.Error())
+			if _, exists := existingUser.Roles[channel]; exists {
+				delete(users[hostmask].Roles, channel)
+				if err := bot.SaveUsers(users); err != nil {
+					connection.Privmsg(target, "Error removing user: "+err.Error())
+					color.Red(">> Error removing user: %s", err.Error())
+					return
+				}
+
+				color.Green(">> User %s removed from %s", nick, channel)
+				connection.Privmsg(target, fmt.Sprintf("User %s has been removed by %s from %s.", nick, nickname, channel))
 				return
 			}
 
-			color.Green(">> User %s removed", nick)
-			connection.Privmsg(target, fmt.Sprintf("User %s has been removed by %s.", nick, nickname))
+			connection.Privmsg(target, fmt.Sprintf("User %s does not have any role in %s.", nick, channel))
+			color.Yellow(">> User %s does not have any role in %s", nick, channel)
 			return
 		}
 
