@@ -6,7 +6,11 @@ This project is a fun exploration into the world of IRC, and is currently still 
 
 ## Prerequisites
 
-- Go 1.16 or later
+- Go 1.16 or later (recommended to use the latest version)
+
+## Credits
+
+- This bot uses the [ErgoChat IRC library](https://github.com/ergochat/ergo).
 
 ## Setup
 
@@ -31,14 +35,7 @@ This project is a fun exploration into the world of IRC, and is currently still 
       "channels": ["#examplechannel"],
       "nick_serv_user": "ExampleNickServUser",
       "nick_serv_pass": "ExampleNickServPass",
-      "use_tls": true,
-      "url_features": {
-        "enable_youtube_check": true,
-        "enable_wikipedia_check": false,
-        "enable_github_check": true,
-        "enable_imdb_check": true,
-        "enable_virus_total_check": false
-      }
+      "use_tls": true
     }
     ````
 
@@ -49,27 +46,56 @@ This project is a fun exploration into the world of IRC, and is currently still 
     - `nick_serv_user`: NickServ username, if your IRC server requires NickServ authentication.
     - `nick_serv_pass`: NickServ password, if your IRC server requires NickServ authentication.
     - `use_tls`: A boolean value (`true` or `false`) indicating whether to use TLS for the connection.
-    - `url_features`: A block containing boolean values to enable or disable specific URL features.
-        - `enable_youtube_check`: Enable or disable YouTube link handling.
-        - `enable_wikipedia_check`: Enable or disable Wikipedia link handling.
-        - `enable_github_check`: Enable or disable GitHub link handling.
-        - `enable_imdb_check`: Enable or disable IMDb link handling.
-        - `enable_virus_total_check`: Enable or disable VirusTotal link checking.
 
-4. Rename the example command configuration file:
-    ```sh
-    mv data/command_config_example.json data/command_config.json
-    ```
-
-5. Run the bot:
+4. Run the bot:
     ```sh
     go run main.go
     ```
 
-6. Set up default permissions for all commands. This step is crucial to enable all other commands. Use the `!managecmd setup <channel>` command in IRC:
+    The first time the bot starts, if no owner is set in the `users.json` file, the bot will automatically prompt you to set an owner. This process includes the following steps:
+
+    - The bot will display a series of messages indicating that no owner was found and prompt you to enter the owner's nickname and a setup password.
+    - The bot will verify the owner's nickname and send a message to the owner to confirm the setup password.
+    - You will need to respond to the bot with the correct setup password within 1 minute.
+    - Upon successful confirmation, the owner will be added to the `users.json` file with the role of "Owner".
+    - If the password is incorrect or no response is received within 1 minute, the bot will shut down.
+
+    Here's what the process looks like:
+
+    ```sh
+    =============================== NO OWNER FOUND ===============================
+    No owner was found in the users.json file. Please set an owner.
+    The bot will shut down if no owner is set within 1 minute after connecting.
+    The bot will message the owner to confirm the Setup password.
+    ==============================================================================
+    >> Please enter the nick of the owner on the network:
+    >> Please enter your Setup password:
+    ```
+
+    Ensure to follow the prompts and set up the owner properly to avoid the bot shutting down.
+
+
+5. Set up default permissions for all commands. **This step is crucial to enable all other commands.** If you skip this setup, no commands will work. Use the `!managecmd setup <channel>` command in IRC:
     ```irc
     !managecmd setup #newchannel
     ```
+
+    This command will:
+
+    - Set up default permissions for the specified channel.
+    - Create a backup of the current configuration before making changes.
+    - Clear existing permissions for the channel.
+    - Set new default permissions for the channel.
+    - Save and reload the updated command configuration.
+    - Re-register commands to reflect updated permissions.
+
+    Example usage:
+
+    ```irc
+    !managecmd setup #examplechannel
+    ```
+
+    Make sure to run this command in the channel where the bot is present to complete the setup. **Without this step, no other commands will be functional.**
 
 ## User Management
 
