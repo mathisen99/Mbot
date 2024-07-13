@@ -27,6 +27,7 @@ Thumbs.db
 # Data files
 /data/config.json
 /data/users.json
+command_permissions*
 
 # enviorment file
 .env
