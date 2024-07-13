@@ -55,7 +55,6 @@ func ReloadCommandConfig(configPath string) error {
 	return nil
 }
 
-// Function to handle commands
 func handleCommand(connection *ircevent.Connection, sender, target, message string, users map[string]User) {
 	// Reload the command configuration
 	err := ReloadCommandConfig("./data/command_permissions.json")
@@ -76,17 +75,6 @@ func handleCommand(connection *ircevent.Connection, sender, target, message stri
 		hostmask := ExtractHostmask(sender)
 		userRoleLevel := GetUserRoleLevel(users, hostmask)
 
-		if cmd == "!managecmd" && userRoleLevel == RoleOwner {
-			// Allow !managecmd command everywhere for the Owner role
-			command.Handler(connection, sender, target, trimmedMessage, users)
-			return
-		}
-
-		if !isCommandAllowedInChannel(target, command) {
-			connection.Privmsg(target, "This command is not allowed in this channel.")
-			return
-		}
-
 		if !rateLimiter.AllowCommand(nickname) {
 			if remaining := rateLimiter.GetCooldownRemaining(nickname); remaining > 0 {
 				connection.Privmsg(target, fmt.Sprintf("You are currently in cooldown for %s. Please wait before sending more commands.", FormatDuration(remaining)))
@@ -95,6 +83,17 @@ func handleCommand(connection *ircevent.Connection, sender, target, message stri
 					connection.Privmsg(target, fmt.Sprintf("You have been temporarily suspended for %s for not reading the warning. Please wait and try again later.", FormatDuration(remaining)))
 				}
 			}
+			return
+		}
+
+		if cmd == "!managecmd" && userRoleLevel == RoleOwner {
+			// Allow !managecmd command everywhere for the Owner role
+			command.Handler(connection, sender, target, trimmedMessage, users)
+			return
+		}
+
+		if !isCommandAllowedInChannel(target, command) {
+			connection.Privmsg(target, "This command is not allowed in this channel.")
 			return
 		}
 
