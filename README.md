@@ -117,28 +117,35 @@ The users are stored in a `users.json` file located in the `data` directory. Bel
 
 
 ```json
-[
-    {
-        "hostmask": "jane!jane@irc.example.com",
-        "role": "Admin"
+{
+    "~jane@irc/example/com/jane": {
+      "hostmask": "~jane@irc/example/com/jane",
+      "roles": {
+        "*": "Owner"
+      }
     },
-    {
-        "hostmask": "bob!bob@irc.example.com",
-        "role": "Trusted"
+    "~bob@irc/example/com/bob": {
+      "hostmask": "~bob@irc/example/com/bob",
+      "roles": {
+        "#general": "Trusted",
+        "#support": "Trusted"
+      }
     },
-    {
-        "hostmask": "alice!alice@irc.example.com",
-        "role": "Regular"
+    "eve@irc/example/com/eve": {
+      "hostmask": "eve@irc/example/com/eve",
+      "roles": {
+        "#general": "BadBoy",
+        "#random": "BadBoy"
+      }
     },
-    {
-        "hostmask": "eve!eve@irc.example.com",
-        "role": "BadBoy"
-    },
-    {
-        "hostmask": "charlie!charlie@irc.example.com",
-        "role": "Owner"
+    "charlie@irc/example/com/charlie": {
+      "hostmask": "charlie@irc/example/com/charlie",
+      "roles": {
+        "#admin": "Admin",
+        "#dev": "Trusted"
+      }
     }
-]
+  }
 ```
 
 ## API Keys
