@@ -2,7 +2,7 @@ package bot
 
 import (
 	"fmt"
-	"mbot/bot/internal"
+	"mbot/bot/url_features"
 	"mbot/config"
 	"os"
 	"strings"
@@ -55,7 +55,7 @@ func HandleUrl(connection *Connection, sender, target, url string) {
 
 // Function to get url title
 func GetTitle(connection *ircevent.Connection, target, url string) {
-	title, err := internal.FetchTitle(url)
+	title, err := url_features.FetchTitle(url)
 	if err != nil || title == "" {
 		color.Red(">> Error fetching title if <nil>: %v the page does not have a title", err)
 	} else {
@@ -65,7 +65,7 @@ func GetTitle(connection *ircevent.Connection, target, url string) {
 
 // HandleYoutubeLink processes YouTube links
 func HandleYoutubeLink(connection *Connection, target, url string) {
-	videoID := internal.ExtractVideoID(url)
+	videoID := url_features.ExtractVideoID(url)
 	yourAPIKey := os.Getenv("YOUTUBE_API_KEY")
 	if yourAPIKey == "" {
 		color.Red(">> YouTube API key is not set")
@@ -73,7 +73,7 @@ func HandleYoutubeLink(connection *Connection, target, url string) {
 		return
 	}
 
-	videoInfo, err := internal.GetYouTubeVideoInfo(videoID, yourAPIKey)
+	videoInfo, err := url_features.GetYouTubeVideoInfo(videoID, yourAPIKey)
 	if err != nil {
 		color.Red(">> Error getting video info: %v", err)
 		connection.Privmsg(target, "Error getting video info.")
@@ -89,7 +89,7 @@ func HandleWikipediaLink(connection *Connection, target, url string) {
 
 // HandleGithubLink processes GitHub links
 func HandleGithubLink(connection *Connection, target, url string) {
-	info, err := internal.FetchGithubRepoInfo(url)
+	info, err := url_features.FetchGithubRepoInfo(url)
 	if err != nil {
 		color.Red(">> Error fetching GitHub repository info: %v", err)
 		connection.Privmsg(target, "Error fetching GitHub repository info.")
@@ -107,14 +107,14 @@ func HandleIMDbLink(connection *Connection, target, url string) {
 		return
 	}
 
-	movieID := internal.ExtractIMDBID(url)
+	movieID := url_features.ExtractIMDBID(url)
 	if movieID == "" {
 		color.Red(">> Error extracting IMDb ID from URL")
 		connection.Privmsg(target, "Error extracting IMDb ID from URL.")
 		return
 	}
 
-	info, err := internal.GetIMDBMovieInfo(movieID)
+	info, err := url_features.GetIMDBMovieInfo(movieID)
 	if err != nil {
 		color.Red(">> Error fetching IMDb movie info: %v", err)
 		connection.Privmsg(target, "Error fetching IMDb movie info.")
@@ -132,7 +132,7 @@ func HandleVirusTotalLink(connection *Connection, sender, target, url string) {
 	}
 
 	nick := ExtractNickname(sender)
-	reportMessage, err := internal.CheckAndFetchURLReport(url)
+	reportMessage, err := url_features.CheckAndFetchURLReport(url)
 	if err != nil {
 		color.Red(">> Error checking URL with VirusTotal: %v", err)
 		connection.Privmsg(target, "Error checking URL with VirusTotal.")

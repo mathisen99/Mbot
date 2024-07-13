@@ -1,4 +1,4 @@
-package internal
+package url_features
 
 import (
 	"context"
