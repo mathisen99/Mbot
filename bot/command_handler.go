@@ -92,7 +92,7 @@ func handleCommand(connection *ircevent.Connection, sender, target, message stri
 			return
 		}
 
-		if !isCommandAllowedInChannel(target, command) {
+		if !IsCommandAllowedInChannel(target, command) {
 			connection.Privmsg(target, "This command is not allowed in this channel.")
 			return
 		}
@@ -114,14 +114,4 @@ func handleCommand(connection *ircevent.Connection, sender, target, message stri
 			connection.Privmsg(target, "You do not have permission to execute this command.")
 		}
 	}
-}
-
-// Helper function to check if a command is allowed in a channel
-func isCommandAllowedInChannel(channel string, command Command) bool {
-	for _, allowedChannel := range command.AllowedChannels {
-		if allowedChannel == channel {
-			return true
-		}
-	}
-	return false
 }

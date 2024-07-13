@@ -1,10 +1,8 @@
 package bot
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
@@ -101,80 +99,12 @@ func LoadConfig(configPath string) (*config.Config, error) {
 	return cfg, nil
 }
 
-// LoadUsersAtStart loads the users from the specified file path and creates the file if it does not exist.
-func LoadUsersAtStart(filePath string) (map[string]User, error) {
-	users, err := LoadUsersFromFile(filePath)
-	if err != nil {
-		if os.IsNotExist(err) {
-			// Ensure the directory exists
-			err = os.MkdirAll(filepath.Dir(filePath), os.ModePerm)
-			if err != nil {
-				return nil, fmt.Errorf("failed to create directory for users.json file: %v", err)
-			}
-
-			// Create an empty users.json file if it does not exist
-			emptyUsers := make(map[string]User)
-			file, err := os.Create(filePath)
-			if err != nil {
-				return nil, fmt.Errorf("failed to create users.json file: %v", err)
-			}
-			defer file.Close()
-
-			encoder := json.NewEncoder(file)
-			err = encoder.Encode(emptyUsers)
-			if err != nil {
-				return nil, fmt.Errorf("failed to write to users.json file: %v", err)
-			}
-
-			return emptyUsers, nil
+// Helper function to check if a command is allowed in a channel
+func IsCommandAllowedInChannel(channel string, command Command) bool {
+	for _, allowedChannel := range command.AllowedChannels {
+		if allowedChannel == channel {
+			return true
 		}
-
-		return nil, err
 	}
-	return users, nil
-}
-
-// LoadUsersFromFile reads the users from a JSON file and creates the file if it does not exist.
-func LoadUsersFromFile(filePath string) (map[string]User, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		if os.IsNotExist(err) {
-			// Ensure the directory exists
-			err = os.MkdirAll(filepath.Dir(filePath), os.ModePerm)
-			if err != nil {
-				return nil, fmt.Errorf("failed to create directory for users.json file: %v", err)
-			}
-
-			// Create an empty users.json file if it does not exist
-			emptyUsers := make(map[string]User)
-			file, err := os.Create(filePath)
-			if err != nil {
-				return nil, fmt.Errorf("failed to create users.json file: %v", err)
-			}
-			defer file.Close()
-
-			encoder := json.NewEncoder(file)
-			err = encoder.Encode(emptyUsers)
-			if err != nil {
-				return nil, fmt.Errorf("failed to write to users.json file: %v", err)
-			}
-
-			return emptyUsers, nil
-		}
-		return nil, fmt.Errorf("error opening users file: %w", err)
-	}
-	defer file.Close()
-
-	var users []User
-	decoder := json.NewDecoder(file)
-	if err := decoder.Decode(&users); err != nil {
-		return nil, fmt.Errorf("error decoding users file: %w", err)
-	}
-
-	userMap := make(map[string]User)
-	for _, user := range users {
-		userMap[user.Hostmask] = user
-	}
-
-	return userMap, nil
+	return false
 }

@@ -73,7 +73,7 @@ func loadAllConfigs() error {
 	}
 
 	// Load users
-	bot.Users, err = bot.LoadUsersAtStart(UserDataPath)
+	bot.Users, err = bot.LoadUsers(UserDataPath)
 	if err != nil {
 		return err
 	}
