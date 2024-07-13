@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"syscall"
 	"time"
@@ -44,10 +45,33 @@ type User struct {
 // Path to the users JSON file
 var filePath = "./data/users.json"
 
-// function to load users from a JSON file
-func LoadUsers() (map[string]User, error) {
+// LoadUsers loads the users from the specified file path and creates the file if it does not exist.
+func LoadUsers(filePath string) (map[string]User, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
+		if os.IsNotExist(err) {
+			// Ensure the directory exists
+			err = os.MkdirAll(filepath.Dir(filePath), os.ModePerm)
+			if err != nil {
+				return nil, fmt.Errorf("failed to create directory for users.json file: %v", err)
+			}
+
+			// Create an empty users.json file if it does not exist
+			emptyUsers := make(map[string]User)
+			file, err := os.Create(filePath)
+			if err != nil {
+				return nil, fmt.Errorf("failed to create users.json file: %v", err)
+			}
+			defer file.Close()
+
+			encoder := json.NewEncoder(file)
+			err = encoder.Encode(emptyUsers)
+			if err != nil {
+				return nil, fmt.Errorf("failed to write to users.json file: %v", err)
+			}
+
+			return emptyUsers, nil
+		}
 		return nil, fmt.Errorf("error opening users file: %w", err)
 	}
 	defer file.Close()

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
@@ -100,23 +101,66 @@ func LoadConfig(configPath string) (*config.Config, error) {
 	return cfg, nil
 }
 
-// LoadUsers loads the users from the specified file path
+// LoadUsersAtStart loads the users from the specified file path and creates the file if it does not exist.
 func LoadUsersAtStart(filePath string) (map[string]User, error) {
 	users, err := LoadUsersFromFile(filePath)
 	if err != nil {
-		color.Red("======================================================== NOTE ========================================================")
-		color.Red("Error loading users.json file\nYou need to create a users.json file in the data directory of the project.\nIf you dont do this the bot will not work.\nThere is an example file in the data directory named users_example.json.")
-		color.Red("Shutting down bot....")
-		color.Red("======================================================================================================================")
+		if os.IsNotExist(err) {
+			// Ensure the directory exists
+			err = os.MkdirAll(filepath.Dir(filePath), os.ModePerm)
+			if err != nil {
+				return nil, fmt.Errorf("failed to create directory for users.json file: %v", err)
+			}
+
+			// Create an empty users.json file if it does not exist
+			emptyUsers := make(map[string]User)
+			file, err := os.Create(filePath)
+			if err != nil {
+				return nil, fmt.Errorf("failed to create users.json file: %v", err)
+			}
+			defer file.Close()
+
+			encoder := json.NewEncoder(file)
+			err = encoder.Encode(emptyUsers)
+			if err != nil {
+				return nil, fmt.Errorf("failed to write to users.json file: %v", err)
+			}
+
+			return emptyUsers, nil
+		}
+
 		return nil, err
 	}
 	return users, nil
 }
 
-// LoadUsersFromFile reads the users from a JSON file
+// LoadUsersFromFile reads the users from a JSON file and creates the file if it does not exist.
 func LoadUsersFromFile(filePath string) (map[string]User, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
+		if os.IsNotExist(err) {
+			// Ensure the directory exists
+			err = os.MkdirAll(filepath.Dir(filePath), os.ModePerm)
+			if err != nil {
+				return nil, fmt.Errorf("failed to create directory for users.json file: %v", err)
+			}
+
+			// Create an empty users.json file if it does not exist
+			emptyUsers := make(map[string]User)
+			file, err := os.Create(filePath)
+			if err != nil {
+				return nil, fmt.Errorf("failed to create users.json file: %v", err)
+			}
+			defer file.Close()
+
+			encoder := json.NewEncoder(file)
+			err = encoder.Encode(emptyUsers)
+			if err != nil {
+				return nil, fmt.Errorf("failed to write to users.json file: %v", err)
+			}
+
+			return emptyUsers, nil
+		}
 		return nil, fmt.Errorf("error opening users file: %w", err)
 	}
 	defer file.Close()
