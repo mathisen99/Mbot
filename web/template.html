@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{if .Pastes}}All Pastes{{else}}View Paste{{end}}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/tokyo-night-dark.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+</head>
+
+<body>
+    <div id="particles-js" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>
+    <header>
+        <h1>Mathisen's Paste Service</h1>
+    </header>
+    <div class="container">
+        {{if .Pastes}}
+        <h2>All Pastes</h2>
+        <ul>
+            {{range .Pastes}}
+            <li>
+                <a href="{{.URL}}" target="_blank">{{.Display}}</a>
+            </li>
+            {{end}}
+        </ul>
+        {{else}}
+        {{.Content}}
+        {{end}}
+    </div>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script src="/static/js/particles.js"></script>
+</body>
+
+</html>

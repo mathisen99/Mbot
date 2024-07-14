@@ -1,14 +1,21 @@
 package main
 
 import (
+	"context"
 	"log"
 	"mbot/bot"
 	"mbot/commands"
 	"mbot/config"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
+
+	web "mbot/web"
 )
+
+var server *http.Server
 
 const (
 	// Config paths
@@ -39,10 +46,22 @@ func main() {
 	}
 
 	// Handle OS signals
-	handleOSSignals(b)
+	stopChan := make(chan os.Signal, 1)
+	signal.Notify(stopChan, syscall.SIGINT, syscall.SIGTERM)
 
-	// Start the bot's main loop
-	b.Loop()
+	// Run bot and web server concurrently
+	go b.Loop()
+	go web.StartWebServer()
+
+	// Block until a signal is received
+	sig := <-stopChan
+	log.Printf("Received signal: %s. Shutting down...", sig)
+
+	// Gracefully shut down the bot
+	bot.ShutdownBot(b.Connection.Connection)
+
+	// Gracefully shut down the web server
+	shutdownWebServer()
 }
 
 // ============================================================================================================================
@@ -87,14 +106,14 @@ func registerCommands() {
 	commands.RegisterManageCommand(bot.CommandConfigData, CommandConfigPath)
 }
 
-// Main helper function to handle OS signals
-func handleOSSignals(b *bot.Bot) {
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
-
-	go func() {
-		sig := <-sigChan
-		log.Printf("Received signal: %s\n", sig)
-		bot.ShutdownBot(b.Connection.Connection)
-	}()
+// Function to gracefully shut down the web server
+func shutdownWebServer() {
+	if server != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		if err := server.Shutdown(ctx); err != nil {
+			log.Fatalf("Failed to gracefully shut down web server: %v", err)
+		}
+		log.Println("Web server shut down gracefully")
+	}
 }

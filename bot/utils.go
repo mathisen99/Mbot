@@ -1,7 +1,12 @@
 package bot
 
 import (
+	"bytes"
+	"crypto/tls"
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"regexp"
 	"strings"
@@ -107,4 +112,62 @@ func IsCommandAllowedInChannel(channel string, command Command) bool {
 		}
 	}
 	return false
+}
+
+// PasteService handles long messages by providing a URL to a paste service (stub function)
+func PasteService(content string) (string, error) {
+	color.Magenta(">> Sending to paste service...")
+
+	// Define the API endpoint
+	url := "http://localhost:8787/create"
+
+	// Prepare the request body as JSON
+	requestBody, err := json.Marshal(map[string]string{
+		"answer": content,
+	})
+	if err != nil {
+		return "", fmt.Errorf("error marshaling request data: %v", err)
+	}
+
+	// Create an HTTP client with TLS configuration to skip verification
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(requestBody))
+	if err != nil {
+		return "", fmt.Errorf("error creating request: %v", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("error sending request to the paste service: %v", err)
+	}
+	defer resp.Body.Close()
+
+	responseBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("error reading response body: %v", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("received non-200 response status: %d, message: %s", resp.StatusCode, responseBody)
+	}
+
+	var result map[string]string
+	err = json.Unmarshal(responseBody, &result)
+	if err != nil {
+		return "", fmt.Errorf("error unmarshaling response JSON: %v", err)
+	}
+
+	url, ok := result["url"]
+	if !ok {
+		return "", fmt.Errorf("URL not found in response")
+	}
+
+	return url, nil
 }

@@ -13,15 +13,6 @@ func handleChannelMessage(connection *Connection, sender, target, message string
 	// Get the bot's nickname
 	botNick := GetBotNickname(connection.Connection)
 
-	// Check for URLs in the message and handles them
-	urls := FindURLs(message)
-	if len(urls) > 0 {
-		for _, url := range urls {
-			color.Green(">> URL found: %s", url)
-			HandleUrl(connection, sender, target, url)
-		}
-	}
-
 	// Check for commands
 	if strings.HasPrefix(message, "!") {
 		handleCommand(connection.Connection, sender, target, message, users)
@@ -29,9 +20,16 @@ func handleChannelMessage(connection *Connection, sender, target, message string
 
 	// Check if the message mentions the bot's nickname
 	if strings.Contains(message, botNick) {
-		nickname := ExtractNickname(sender)
-		response := "Hello, " + nickname + "!"
-		connection.Privmsg(target, response)
+		CallOpenAI(connection, sender, target, message)
 		return
+	}
+
+	// Check for URLs in the message and handles them
+	urls := FindURLs(message)
+	if len(urls) > 0 {
+		for _, url := range urls {
+			color.Green(">> URL found: %s", url)
+			HandleUrl(connection, sender, target, url)
+		}
 	}
 }

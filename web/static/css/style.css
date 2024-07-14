@@ -1,0 +1,168 @@
+/* Cyberpunk / Dark Anime color palette */
+:root {
+    --main-bg: #0d0d0d; /* Darker body background */
+    --container-bg: #121212; /* Darker container background */
+    --accent: #ff4081; /* Neon pink for important elements and accents */
+    --secondary-accent: #7c4dff; /* Neon purple for additional accents */
+    --text-primary: #ffffff; /* Bright white for primary text */
+    --text-secondary: #b0bec5; /* Light gray for secondary text */
+    --border-color: #37474f; /* Subdued color for borders */
+    --code-bg: #1a1a1a; /* Very dark background for code blocks */
+    --link-hover: #69f0ae; /* Neon green for links and interactive elements */
+}
+
+
+body {
+    font-family: 'Fira Code', monospace;
+    color: var(--text-primary);
+    background-color: var(--main-bg);
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.5;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000; /* Ensures the header is above all other content */
+    text-align: center;
+    padding: 10px 0; /* Padding for aesthetic spacing */
+    box-shadow: none; /* Remove shadow if not desired with transparent background */
+    background-color: transparent; /* Sets background to fully transparent */
+}
+
+
+h1 {
+    font-size: 2em; /* Ensures visibility */
+    color: var(--accent); /* Neon effect for the text */
+    text-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent); /* Glow effect for visibility */
+}
+
+.container {
+    margin-top: 60px; /* Adjust this value based on the actual height of your header */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+    border-radius: 5px;
+    padding: 20px;
+    width: 90%;
+    max-width: 90%;
+    max-height: 80vh;
+    overflow: auto;
+    background-color: rgba(18, 18, 18, 0.9);
+    border: 1px solid var(--border-color);
+    margin-bottom: 20px;
+    color: var(--text-primary);
+    /* Hide scrollbar */
+    scrollbar-width: none;
+}
+
+
+
+
+
+/* Style adjustments for headers, paragraphs, and lists */
+ h2, h3, h4, h5, h6 {
+    color: var(--accent);
+    margin-top: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+p, li {
+    color: var(--text-primary);
+    margin-top: 0.5em;
+}
+
+ul, ol {
+    padding-left: 20px;
+}
+
+a {
+    color: var(--secondary-accent);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--link-hover);
+    text-decoration: underline;
+}
+
+/* Enhanced styles for code blocks to fit the cyberpunk theme */
+pre code {
+    background-color: var(--code-bg) !important;
+    color: var(--text-secondary);
+    padding: 10px;
+    border-radius: 5px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    border: 1px solid var(--secondary-accent);
+}
+
+/* Neon accents for inline code to pop out */
+:not(pre) > code {
+    background: var(--border-color);
+    color: var(--accent);
+    padding: .2em .4em;
+    border-radius: 3px;
+}
+
+/* Override Highlight.js styles if needed */
+.hljs {
+    background-color: var(--code-bg) !important;
+    color: var(--text-secondary) !important;
+}
+
+/* Customize color of tokens for Highlight.js */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-section,
+.hljs-link {
+    color: var(--code-keyword);
+}
+
+.hljs-function .hljs-keyword {
+    color: var(--text-primary);
+}
+
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+    color: var(--code-string);
+}
+
+.hljs-comment,
+.hljs-quote,
+.hljs-meta .hljs-keyword {
+    color: var(--code-comment);
+}
+
+.hljs-number,
+.hljs-regexp,
+.hljs-literal,
+.hljs-template-variable,
+.hljs-template-tag {
+    color: var(--code-literal);
+}
+
+.hljs-title,
+.hljs-name,
+.hljs-section,
+.hljs-attribute,
+.hljs-variable,
+.hljs-params {
+    color: var(--code-namespace);
+}
+
+/* Override Highlight.js line numbers */
+.hljs-ln-numbers {
+    color: var(--text-secondary) !important;
+}
+
+/* Additional custom styles can be added below */
