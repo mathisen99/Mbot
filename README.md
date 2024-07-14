@@ -79,6 +79,11 @@ The following roles are supported:
 - `!shutdown` Shuts down the bot, owner only.
 - `!nick <new_nickname>` Changes the bot's nickname, owner only.
 
+## Openai
+
+You can talk to the bot using the bots nickname and it will answer using the GPT-4o Model.
+This is still work in progress....
+
 ## API Keys
 
 For certain features, you will need to have API keys for YouTube, IMDb, and VirusTotal. These keys should be stored in a `.env` file or exported as environment variables.
@@ -91,6 +96,8 @@ For certain features, you will need to have API keys for YouTube, IMDb, and Viru
 
 - **VirusTotal API Key**: You can get a VirusTotal API key by signing up for a free account on the [VirusTotal website](https://www.virustotal.com/). After logging in, navigate to your profile and generate an API key.
 
+- **OpenAI API Key**: You can obtain an OpenAI API key by signing up for an account on the [OpenAI website](https://www.openai.com/). After logging in, navigate to the API section and generate an API key.
+
 ### Example `.env` file
 
 Create a `.env` file in the root directory of the project with the following content:
@@ -99,6 +106,7 @@ Create a `.env` file in the root directory of the project with the following con
 YOUTUBE_API_KEY=your_youtube_api_key
 OMDb_API_KEY=your_omdb_api_key
 VIRUSTOTAL_API_KEY=your_virustotal_api_key
+OPENAI_API_KEY=your_openai_api_key
 ```
 
 ### Setting Environment Variables
@@ -111,6 +119,7 @@ Alternatively, you can set the environment variables directly.
 setx YOUTUBE_API_KEY "your_youtube_api_key"
 setx OMDb_API_KEY "your_omdb_api_key"
 setx VIRUSTOTAL_API_KEY "your_virustotal_api_key"
+setx OPENAI_API_KEY "your_openai_api_key"
 ```
 
 #### On Linux or macOS:
@@ -119,6 +128,7 @@ setx VIRUSTOTAL_API_KEY "your_virustotal_api_key"
 export YOUTUBE_API_KEY="your_youtube_api_key"
 export OMDb_API_KEY="your_omdb_api_key"
 export VIRUSTOTAL_API_KEY="your_virustotal_api_key"
+export OPENAI_API_KEY="your_openai_api_key"
 ```
 ## Credits
 
