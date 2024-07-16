@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// validTokens is a map of valid tokens.
+// Load the valid token from environment variable
 var validTokens = map[string]bool{
 	os.Getenv("VALID_PASTE_TOKEN"): true,
 }

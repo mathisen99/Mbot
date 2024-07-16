@@ -118,6 +118,7 @@ func PasteService(content string) (string, error) {
 	color.Magenta(">> Sending to paste service...")
 	// Load token for the paste service
 	token := os.Getenv("VALID_PASTE_TOKEN")
+	fmt.Println("Token:", token) // Add this line to print the token and verify it's correct
 
 	// Define the API endpoint
 	url := "https://mathizen.net:8787/create"
