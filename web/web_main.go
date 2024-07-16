@@ -39,13 +39,19 @@ func StartWebServer() {
 	// Serve the uploads directory (assuming you create this directory)
 	r.Static("/web/uploads", "./web/uploads")
 
-	// Routes
-	r.POST("/create", mod.HandleCreate)
-	r.POST("/pst", mod.HandleCreateSimple)
-	r.POST("/images", mod.HandleUploadImage)
+	// Public routes
 	r.GET("/images/:id", mod.HandleViewImage)
 	r.GET("/view/:id", mod.HandleView)
 	r.GET("/list", mod.HandleListAll)
+
+	// Apply Auth Middleware to protected routes
+	protected := r.Group("/")
+	protected.Use(AuthMiddleware())
+	{
+		protected.POST("/create", mod.HandleCreate)
+		protected.POST("/pst", mod.HandleCreateSimple)
+		protected.POST("/images", mod.HandleUploadImage)
+	}
 
 	// Run HTTPS server using the certificates
 	// log.Fatal(r.RunTLS(":8787", "/etc/apache2/ssl/certificate.crt", "/etc/apache2/ssl/private.key"))

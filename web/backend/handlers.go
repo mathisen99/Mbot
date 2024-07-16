@@ -39,7 +39,7 @@ func HandleCreate(c *gin.Context) {
 	mu.Lock()
 	store[id] = Entry{ID: id, Content: request.Answer, Type: "text"}
 	mu.Unlock()
-	c.JSON(http.StatusOK, gin.H{"url": "http://localhost:8787/view/" + id})
+	c.JSON(http.StatusOK, gin.H{"url": "https://mathizen.net:8787/view/" + id})
 }
 
 func HandleView(c *gin.Context) {
@@ -77,9 +77,9 @@ func HandleView(c *gin.Context) {
 // Assuming you have a function to determine the correct URL
 func getUrl(entry Entry) string {
 	if entry.Type == "image" {
-		return "http://localhost:8787/uploads/" + entry.Content
+		return "https://mathizen.net:8787/uploads/" + entry.Content
 	}
-	return "http://localhost:8787/view/" + entry.ID
+	return "https://mathizen.net:8787/view/" + entry.ID
 }
 
 func HandleListAll(c *gin.Context) {
@@ -133,7 +133,7 @@ func HandleCreateSimple(c *gin.Context) {
 	mu.Lock()
 	store[id] = Entry{ID: id, Content: content, Type: "text"}
 	mu.Unlock()
-	c.JSON(http.StatusOK, gin.H{"url": "http://localhost:8787/view/" + id})
+	c.JSON(http.StatusOK, gin.H{"url": "https://mathizen.net:8787/view/" + id})
 }
 
 func HandleUploadImage(c *gin.Context) {
@@ -153,7 +153,7 @@ func HandleUploadImage(c *gin.Context) {
 	mu.Lock()
 	store[fileID] = Entry{ID: fileID, Content: fileName, Type: "image"}
 	mu.Unlock()
-	c.JSON(http.StatusOK, gin.H{"url": "http://localhost:8787/uploads/" + fileName})
+	c.JSON(http.StatusOK, gin.H{"url": "https://mathizen.net:8787/uploads/" + fileName})
 }
 
 func HandleViewImage(c *gin.Context) {

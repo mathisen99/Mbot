@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"regexp"
 	"strings"
 
@@ -30,12 +31,13 @@ func ExtractImageURL(message string) (string, string) {
 	return message, ""
 }
 
-// PasteService handles long messages by providing a URL to a paste service (stub function)
 func PasteService(content string) (string, error) {
 	color.Magenta(">> Sending to paste service...")
+	// Load token for the paste service
+	token := os.Getenv("VALID_PASTE_TOKEN")
 
 	// Define the API endpoint
-	url := "http://localhost:8787/create"
+	url := "https://mathizen.net:8787/create"
 
 	// Prepare the request body as JSON
 	requestBody, err := json.Marshal(map[string]string{
@@ -58,6 +60,7 @@ func PasteService(content string) (string, error) {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+token)
 
 	resp, err := client.Do(req)
 	if err != nil {
