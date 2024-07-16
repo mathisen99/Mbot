@@ -4,12 +4,14 @@ import "mbot/config"
 
 // RegisterAllCommands registers all commands in the package
 func RegisterAllCommands() {
-	RegisterHelloCommand()      // Hello example command
-	RegisterHello2Command()     // Hello2 example command
-	RegisterURLCommand()        // URL command to enable/disable URL features (YouTube, Wikipedia, etc.)
-	RegisterBaseCommands()      // Base commands (op, deop, kick, etc.)
-	RegisterAddUserCommand()    // AddUser command (Used to add users to the bot)
-	RegisterRemoveUserCommand() // RemoveUser command (Used to remove users from the bot)
+	RegisterHelloCommand()        // Hello example command
+	RegisterHello2Command()       // Hello2 example command
+	RegisterURLCommand()          // URL command to enable/disable URL features (YouTube, Wikipedia, etc.)
+	RegisterBaseCommands()        // Base commands (op, deop, kick, etc.)
+	RegisterAddUserCommand()      // AddUser command (Used to add users to the bot)
+	RegisterRemoveUserCommand()   // RemoveUser command (Used to remove users from the bot)
+	RegisterPersonalityCommands() // Personality commands (Used to set the bot's personality for a channel)
+	RegisterMemoryWipeCommand()   // MemoryWipe command (Used to wipe a user's memory)
 }
 
 // GetDefaultPermissions returns the default command permissions for a given channel
@@ -18,6 +20,10 @@ func GetDefaultPermissions(channel string) map[string][]config.CommandPermission
 		// User management commands
 		"!adduser": {{Role: "Admin", Channels: []string{channel}}},
 		"!deluser": {{Role: "Admin", Channels: []string{channel}}},
+
+		// Personality and memory commands
+		"!personality": {{Role: "Admin", Channels: []string{channel}}},
+		"!memory":      {{Role: "Everyone", Channels: []string{channel}}},
 
 		// URL command
 		"!url": {{Role: "Admin", Channels: []string{channel}}},

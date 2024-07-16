@@ -102,7 +102,7 @@ func OpenAIRequest(message, imageURL, target string) (string, error) {
 		return "", fmt.Errorf("error decoding response: %v", err)
 	}
 
-	color.Cyan(">> Received response from OpenAI: %+v", result)
+	//color.Cyan(">> Received response from OpenAI: %+v", result)
 	if len(result.Choices) > 0 {
 		// if lengt is bigger then 420 characters we send it to the paste service
 		if len(result.Choices[0].Message.Content) > 420 {
