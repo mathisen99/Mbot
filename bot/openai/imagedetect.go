@@ -6,41 +6,16 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"regexp"
+	"strings"
 
 	"github.com/fatih/color"
 )
 
-type OpenAIRequestBody struct {
-	Model     string                   `json:"model"`
-	Messages  []map[string]interface{} `json:"messages"`
-	MaxTokens int                      `json:"max_tokens"`
-}
+func detectImageContent(message, imageURL string) (string, error) {
+	color.Cyan(">> detectImageContent called with message: %s and imageURL: %s", message, imageURL)
 
-type OpenAIResponse struct {
-	ID      string `json:"id"`
-	Object  string `json:"object"`
-	Created int    `json:"created"`
-	Model   string `json:"model"`
-	Usage   struct {
-		PromptTokens     int `json:"prompt_tokens"`
-		CompletionTokens int `json:"completion_tokens"`
-		TotalTokens      int `json:"total_tokens"`
-	} `json:"usage"`
-	Choices []struct {
-		Message struct {
-			Role    string `json:"role"`
-			Content string `json:"content"`
-		} `json:"message"`
-		FinishReason string `json:"finish_reason"`
-		Index        int    `json:"index"`
-		Logprobs     any    `json:"logprobs"`
-	} `json:"choices"`
-}
-
-func OpenAIRequest(message, imageURL, target string) (string, error) {
-	color.Cyan(">> OpenAIRequestRaw called with message: %s, imageURL: %s, target: %s", message, imageURL, target)
-
-	// Prepare the user message content
+	// Prepare the user message content using raw approach
 	messages := []map[string]interface{}{
 		{
 			"role": "user",
@@ -100,18 +75,26 @@ func OpenAIRequest(message, imageURL, target string) (string, error) {
 		return "", fmt.Errorf("error decoding response: %v", err)
 	}
 
-	//color.Cyan(">> Received response from OpenAI: %+v", result)
 	if len(result.Choices) > 0 {
-		// if lengt is bigger then 420 characters we send it to the paste service
-		if len(result.Choices[0].Message.Content) > 420 {
-			return PasteService(result.Choices[0].Message.Content)
-		}
 
-		// flatten the response to a single string remove any newlines or extra spaces
-		result.Choices[0].Message.Content = FlattenMessage(result.Choices[0].Message.Content)
-
+		color.Green(">> Returning response from OpenAI: %s", result.Choices[0].Message.Content)
 		return result.Choices[0].Message.Content, nil
 	}
 
 	return "", fmt.Errorf("no response received from OpenAI")
+}
+
+func FlattenMessage(message string) string {
+	// Remove all newline characters
+	message = strings.ReplaceAll(message, "\n", " ")
+	message = strings.ReplaceAll(message, "\r", " ")
+
+	// Remove all multiple spaces with a single space
+	re := regexp.MustCompile(`\s+`)
+	message = re.ReplaceAllString(message, " ")
+
+	// Trim leading and trailing spaces
+	message = strings.TrimSpace(message)
+
+	return message
 }

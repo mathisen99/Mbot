@@ -23,13 +23,47 @@ func DefineDetectImageContentFunction() *openai.FunctionDefinition {
 	}
 }
 
-// GetTools returns a list of available tools for function calling.
-func GetTools() []openai.Tool {
-	return []openai.Tool{
-		{
-			Type:     openai.ToolTypeFunction,
-			Function: DefineDetectImageContentFunction(),
+// DefineCreateImageFunction defines the function for creating images.
+func DefineCreateImageFunction() *openai.FunctionDefinition {
+	return &openai.FunctionDefinition{
+		Name:        "create_image",
+		Description: "Creates an image based on the provided description",
+		Parameters: jsonschema.Definition{
+			Type: jsonschema.Object,
+			Properties: map[string]jsonschema.Definition{
+				"description": {
+					Type:        jsonschema.String,
+					Description: "The description of the image to create",
+				},
+			},
+			Required: []string{"description"},
 		},
-		// Add more tools here as needed
+	}
+}
+
+// DefineCheckWeatherFunction defines the function for checking the weather.
+func DefineCheckWeatherFunction() *openai.FunctionDefinition {
+	return &openai.FunctionDefinition{
+		Name:        "check_weather",
+		Description: "Checks the weather for a specified location",
+		Parameters: jsonschema.Definition{
+			Type: jsonschema.Object,
+			Properties: map[string]jsonschema.Definition{
+				"location": {
+					Type:        jsonschema.String,
+					Description: "The location to check the weather for",
+				},
+			},
+			Required: []string{"location"},
+		},
+	}
+}
+
+// GetTools returns a list of available tools for function calling.
+func GetTools() []openai.FunctionDefinition {
+	return []openai.FunctionDefinition{
+		*DefineDetectImageContentFunction(),
+		*DefineCreateImageFunction(),
+		*DefineCheckWeatherFunction(),
 	}
 }

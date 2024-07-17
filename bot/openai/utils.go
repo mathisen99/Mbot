@@ -26,8 +26,6 @@ func ExtractImageURL(message string) (string, string) {
 		fmt.Println("Message without URL:", messageWithoutURL)
 		return messageWithoutURL, imageURL
 	}
-
-	fmt.Println("No image URL found")
 	return message, ""
 }
 
@@ -90,13 +88,4 @@ func PasteService(content string) (string, error) {
 	}
 
 	return url, nil
-}
-
-// detectImageContent uses a regex to detect image content in a URL.
-func detectImageContent(imageURL string) string {
-	re := regexp.MustCompile(`\bhttps?://\S+\.(jpg|jpeg|png|gif)\b`)
-	if re.MatchString(imageURL) {
-		return "YES IMAGE DETECTED"
-	}
-	return "NO IMAGE DETECTED"
 }
