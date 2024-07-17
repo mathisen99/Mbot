@@ -5,10 +5,18 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/fatih/color"
 	"github.com/sashabaranov/go-openai"
 )
+
+// Global variables for tracking image creation
+var imageTimestamps []time.Time
+var imageLimit = 5
+var timeWindow = 24 * time.Hour
+var mutex = &sync.Mutex{}
 
 // ProcessResponse processes the response from OpenAI.
 func ProcessResponse(ctx context.Context, client *openai.Client, resp *openai.ChatCompletionResponse, req openai.ChatCompletionRequest) (string, error) {
@@ -30,12 +38,18 @@ func ProcessResponse(ctx context.Context, client *openai.Client, resp *openai.Ch
 				return "", fmt.Errorf("error detecting image content: %v", err)
 			}
 		case "create_image":
+			if !canCreateImage() {
+				return "Image creation limit reached. Please try again later.", nil
+			}
+
 			functionResponse, err = createImage(functionArgs["description"])
 			if err != nil {
 				return "", fmt.Errorf("error generating image: %v", err)
 			}
 			// Ensure the image URL is included in the response
 			functionResponse = fmt.Sprintf("Here’s an image representing your request: %s", functionResponse)
+
+			recordImageCreation()
 		case "check_weather":
 			location := functionArgs["location"]
 			city := extractCity(location)
@@ -84,6 +98,33 @@ func ProcessResponse(ctx context.Context, client *openai.Client, resp *openai.Ch
 	}
 
 	return "No function call was made", nil
+}
+
+// canCreateImage checks if an image can be created based on the limit and time window.
+func canCreateImage() bool {
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	now := time.Now()
+	// Filter out timestamps older than the time window
+	newTimestamps := []time.Time{}
+	for _, ts := range imageTimestamps {
+		if now.Sub(ts) < timeWindow {
+			newTimestamps = append(newTimestamps, ts)
+		}
+	}
+	imageTimestamps = newTimestamps
+
+	// Check if the limit is reached
+	return len(imageTimestamps) < imageLimit
+}
+
+// recordImageCreation records the timestamp of a new image creation.
+func recordImageCreation() {
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	imageTimestamps = append(imageTimestamps, time.Now())
 }
 
 // extractCity extracts the city name from a location string.
