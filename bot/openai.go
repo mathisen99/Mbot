@@ -119,7 +119,7 @@ func NormalOpenAIRequest(connection *Connection, target, sender, message, person
 			color.Red("Error calling PasteService: %v", err)
 			return
 		}
-		connection.Privmsg(target, pasteURL)
+		connection.Privmsg(target, "The answer is too long for a single IRC message. For your convenience, I've pasted it here: "+pasteURL)
 		return
 	}
 
