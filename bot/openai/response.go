@@ -37,7 +37,9 @@ func ProcessResponse(ctx context.Context, client *openai.Client, resp *openai.Ch
 			// Ensure the image URL is included in the response
 			functionResponse = fmt.Sprintf("Here’s an image representing your request: %s", functionResponse)
 		case "check_weather":
-			functionResponse = checkWeather(functionArgs["location"])
+			location := functionArgs["location"]
+			city := extractCity(location)
+			functionResponse = checkWeather(city)
 		default:
 			functionResponse = "Unknown function call"
 		}
@@ -82,4 +84,11 @@ func ProcessResponse(ctx context.Context, client *openai.Client, resp *openai.Ch
 	}
 
 	return "No function call was made", nil
+}
+
+// extractCity extracts the city name from a location string.
+func extractCity(location string) string {
+	// Split the location by comma and return the first part (assumed to be the city name)
+	parts := strings.Split(location, ",")
+	return strings.TrimSpace(parts[0])
 }
