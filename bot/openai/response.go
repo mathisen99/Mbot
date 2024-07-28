@@ -14,7 +14,7 @@ import (
 
 // Global variables for tracking image creation
 var imageTimestamps []time.Time
-var imageLimit = 5
+var imageLimit = 10
 var timeWindow = 24 * time.Hour
 var mutex = &sync.Mutex{}
 
