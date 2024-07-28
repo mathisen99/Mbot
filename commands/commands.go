@@ -12,6 +12,7 @@ func RegisterAllCommands() {
 	RegisterRemoveUserCommand()   // RemoveUser command (Used to remove users from the bot)
 	RegisterPersonalityCommands() // Personality commands (Used to set the bot's personality for a channel)
 	RegisterMemoryWipeCommand()   // MemoryWipe command (Used to wipe a user's memory)
+	RegisterYTCommand()           // YouTube search command
 }
 
 // GetDefaultPermissions returns the default command permissions for a given channel
@@ -27,6 +28,7 @@ func GetDefaultPermissions(channel string) map[string][]config.CommandPermission
 
 		// URL command
 		"!url": {{Role: "Admin", Channels: []string{channel}}},
+		"!yt":  {{Role: "Everyone", Channels: []string{channel}}},
 
 		// Base commands
 		"!op":      {{Role: "Admin", Channels: []string{channel}}},
