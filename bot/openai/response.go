@@ -54,6 +54,12 @@ func ProcessResponse(ctx context.Context, client *openai.Client, resp *openai.Ch
 			location := functionArgs["location"]
 			city := extractCity(location)
 			functionResponse = checkWeather(city)
+		case "search_youtube":
+			query := functionArgs["query"]
+			functionResponse, err = searchYouTube(query)
+			if err != nil {
+				return "", fmt.Errorf("error searching YouTube: %v", err)
+			}
 		default:
 			functionResponse = "Unknown function call"
 		}

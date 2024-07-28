@@ -59,6 +59,24 @@ func DefineCheckWeatherFunction() *openai.FunctionDefinition {
 	}
 }
 
+// DefineSearchYouTubeFunction defines the function for searching YouTube.
+func DefineSearchYouTubeFunction() *openai.FunctionDefinition {
+	return &openai.FunctionDefinition{
+		Name:        "search_youtube",
+		Description: "Searches YouTube for videos based on the provided query",
+		Parameters: jsonschema.Definition{
+			Type: jsonschema.Object,
+			Properties: map[string]jsonschema.Definition{
+				"query": {
+					Type:        jsonschema.String,
+					Description: "The search query to use for the YouTube search",
+				},
+			},
+			Required: []string{"query"},
+		},
+	}
+}
+
 // GetTools returns a list of available tools for function calling.
 func GetTools() []openai.FunctionDefinition {
 	return []openai.FunctionDefinition{
