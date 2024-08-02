@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -27,7 +28,7 @@ func ProcessResponse(ctx context.Context, client *openai.Client, resp *openai.Ch
 		var functionArgs map[string]string
 		err := json.Unmarshal([]byte(msg.FunctionCall.Arguments), &functionArgs)
 		if err != nil {
-			return "", fmt.Errorf("JSON unmarshal error: %v", err)
+			return "", fmt.Errorf("JSON unmarshal error in function '%s': %v", msg.FunctionCall.Name, err)
 		}
 
 		var functionResponse string
@@ -46,7 +47,6 @@ func ProcessResponse(ctx context.Context, client *openai.Client, resp *openai.Ch
 			if err != nil {
 				return "", fmt.Errorf("error generating image: %v", err)
 			}
-			// Ensure the image URL is included in the response
 			functionResponse = fmt.Sprintf("Here’s an image representing your request: %s", functionResponse)
 
 			recordImageCreation()
@@ -74,7 +74,6 @@ func ProcessResponse(ctx context.Context, client *openai.Client, resp *openai.Ch
 
 		color.Cyan(">> Sending function response back to OpenAI: %v", responseMessage)
 
-		// Update the conversation with the function response
 		req.Messages = append(req.Messages, msg)
 		req.Messages = append(req.Messages, responseMessage)
 
@@ -87,7 +86,6 @@ func ProcessResponse(ctx context.Context, client *openai.Client, resp *openai.Ch
 		color.Cyan(">> Final answer received: %v", finalMsg)
 		answer := finalMsg.Content
 
-		// Check answer length if it's too long meaning more than 420 characters then we send the answer to the paste service
 		color.Cyan(">> Final answer length: %d", len(answer))
 		if len(answer) > 420 {
 			pasteURL, err := PasteService(answer)
@@ -95,6 +93,16 @@ func ProcessResponse(ctx context.Context, client *openai.Client, resp *openai.Ch
 				return "", fmt.Errorf("error calling PasteService: %v", err)
 			}
 			return pasteURL, nil
+		}
+
+		// Ensure the image URL is included in the final response if it was part of the function response
+		if msg.FunctionCall.Name == "create_image" {
+			// Regex to find URLs in the answer
+			re := regexp.MustCompile(`https?://[^\s]+`)
+			// Remove any existing URLs
+			answer = re.ReplaceAllString(answer, "")
+			// Append the function response URL
+			answer = fmt.Sprintf("%s\n%s", strings.TrimSpace(answer), functionResponse)
 		}
 
 		// Flatten the response to remove any newlines or extra spaces
@@ -112,8 +120,7 @@ func canCreateImage() bool {
 	defer mutex.Unlock()
 
 	now := time.Now()
-	// Filter out timestamps older than the time window
-	newTimestamps := []time.Time{}
+	newTimestamps := imageTimestamps[:0]
 	for _, ts := range imageTimestamps {
 		if now.Sub(ts) < timeWindow {
 			newTimestamps = append(newTimestamps, ts)
@@ -121,8 +128,7 @@ func canCreateImage() bool {
 	}
 	imageTimestamps = newTimestamps
 
-	// Check if the limit is reached
-	return len(imageTimestamps) < imageLimit
+	return len(newTimestamps) < imageLimit
 }
 
 // recordImageCreation records the timestamp of a new image creation.
@@ -135,7 +141,6 @@ func recordImageCreation() {
 
 // extractCity extracts the city name from a location string.
 func extractCity(location string) string {
-	// Split the location by comma and return the first part (assumed to be the city name)
 	parts := strings.Split(location, ",")
 	return strings.TrimSpace(parts[0])
 }
