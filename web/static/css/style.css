@@ -9,6 +9,11 @@
     --border-color: #37474f; /* Subdued color for borders */
     --code-bg: #1a1a1a; /* Very dark background for code blocks */
     --link-hover: #69f0ae; /* Neon green for links and interactive elements */
+    --code-keyword: #ff4081; /* Neon pink for code keywords */
+    --code-string: #7c4dff; /* Neon purple for code strings */
+    --code-comment: #b0bec5; /* Light gray for code comments */
+    --code-literal: #ffd740; /* Neon yellow for code literals */
+    --code-namespace: #69f0ae; /* Neon green for code namespaces */
 }
 
 body {
@@ -155,46 +160,37 @@ pre code {
 }
 
 /* VBScript specific styles */
-.hljs-built_in,
-.hljs-class .hljs-title,
-.hljs-constant,
-.hljs-function,
-.hljs-keyword,
-.hljs-variable,
-.hljs-title,
-.hljs-params,
-.hljs-meta {
+.language-vbscript .hljs-keyword,
+.language-vbscript .hljs-built_in,
+.language-vbscript .hljs-title {
     color: var(--code-keyword);
 }
 
-.hljs-string,
-.hljs-symbol,
-.hljs-bullet,
-.hljs-addition,
-.hljs-attribute,
-.hljs-meta .hljs-string {
+.language-vbscript .hljs-string,
+.language-vbscript .hljs-symbol,
+.language-vbscript .hljs-bullet,
+.language-vbscript .hljs-addition {
     color: var(--code-string);
 }
 
-.hljs-comment,
-.hljs-quote,
-.hljs-meta .hljs-comment {
+.language-vbscript .hljs-comment,
+.language-vbscript .hljs-quote,
+.language-vbscript .hljs-meta .hljs-comment {
     color: var(--code-comment);
 }
 
-.hljs-number,
-.hljs-literal,
-.hljs-deletion,
-.hljs-regexp,
-.hljs-built_in,
-.hljs-class .hljs-title,
-.hljs-meta .hljs-number {
+.language-vbscript .hljs-number,
+.language-vbscript .hljs-literal,
+.language-vbscript .hljs-deletion,
+.language-vbscript .hljs-regexp,
+.language-vbscript .hljs-built_in,
+.language-vbscript .hljs-meta .hljs-number {
     color: var(--code-literal);
 }
 
-.hljs-title.class_,
-.hljs-title.class .hljs-identifier,
-.hljs-attribute {
+.language-vbscript .hljs-title.class_,
+.language-vbscript .hljs-title.class .hljs-identifier,
+.language-vbscript .hljs-attribute {
     color: var(--code-namespace);
 }
 
