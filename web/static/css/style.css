@@ -11,7 +11,6 @@
     --link-hover: #69f0ae; /* Neon green for links and interactive elements */
 }
 
-
 body {
     font-family: 'Fira Code', monospace;
     color: var(--text-primary);
@@ -37,7 +36,6 @@ header {
     background-color: transparent; /* Sets background to fully transparent */
 }
 
-
 h1 {
     font-size: 2em; /* Ensures visibility */
     color: var(--accent); /* Neon effect for the text */
@@ -61,12 +59,8 @@ h1 {
     scrollbar-width: none;
 }
 
-
-
-
-
 /* Style adjustments for headers, paragraphs, and lists */
- h2, h3, h4, h5, h6 {
+h2, h3, h4, h5, h6 {
     color: var(--accent);
     margin-top: 24px;
     margin-bottom: 16px;
@@ -157,6 +151,50 @@ pre code {
 .hljs-attribute,
 .hljs-variable,
 .hljs-params {
+    color: var(--code-namespace);
+}
+
+/* VBScript specific styles */
+.hljs-built_in,
+.hljs-class .hljs-title,
+.hljs-constant,
+.hljs-function,
+.hljs-keyword,
+.hljs-variable,
+.hljs-title,
+.hljs-params,
+.hljs-meta {
+    color: var(--code-keyword);
+}
+
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta .hljs-string {
+    color: var(--code-string);
+}
+
+.hljs-comment,
+.hljs-quote,
+.hljs-meta .hljs-comment {
+    color: var(--code-comment);
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-deletion,
+.hljs-regexp,
+.hljs-built_in,
+.hljs-class .hljs-title,
+.hljs-meta .hljs-number {
+    color: var(--code-literal);
+}
+
+.hljs-title.class_,
+.hljs-title.class .hljs-identifier,
+.hljs-attribute {
     color: var(--code-namespace);
 }
 
