@@ -9,11 +9,6 @@
     --border-color: #37474f; /* Subdued color for borders */
     --code-bg: #1a1a1a; /* Very dark background for code blocks */
     --link-hover: #69f0ae; /* Neon green for links and interactive elements */
-    --code-keyword: #ff4081; /* Neon pink for code keywords */
-    --code-string: #7c4dff; /* Neon purple for code strings */
-    --code-comment: #b0bec5; /* Light gray for code comments */
-    --code-literal: #ffd740; /* Neon yellow for code literals */
-    --code-namespace: #69f0ae; /* Neon green for code namespaces */
 }
 
 body {
@@ -44,7 +39,7 @@ header {
 h1 {
     font-size: 2em; /* Ensures visibility */
     color: var(--accent); /* Neon effect for the text */
-    text-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent); /* Glow effect for visibility */
+    text-shadow: 0 0 10px var(--accent), 0 0 20px var (--accent); /* Glow effect for visibility */
 }
 
 .container {
@@ -108,95 +103,6 @@ pre code {
     color: var(--accent);
     padding: .2em .4em;
     border-radius: 3px;
-}
-
-/* Override Highlight.js styles if needed */
-.hljs {
-    background-color: var(--code-bg) !important;
-    color: var(--text-secondary) !important;
-}
-
-/* Customize color of tokens for Highlight.js */
-.hljs-keyword,
-.hljs-selector-tag,
-.hljs-literal,
-.hljs-section,
-.hljs-link {
-    color: var(--code-keyword);
-}
-
-.hljs-function .hljs-keyword {
-    color: var(--text-primary);
-}
-
-.hljs-string,
-.hljs-symbol,
-.hljs-bullet,
-.hljs-addition {
-    color: var(--code-string);
-}
-
-.hljs-comment,
-.hljs-quote,
-.hljs-meta .hljs-keyword {
-    color: var(--code-comment);
-}
-
-.hljs-number,
-.hljs-regexp,
-.hljs-literal,
-.hljs-template-variable,
-.hljs-template-tag {
-    color: var(--code-literal);
-}
-
-.hljs-title,
-.hljs-name,
-.hljs-section,
-.hljs-attribute,
-.hljs-variable,
-.hljs-params {
-    color: var(--code-namespace);
-}
-
-/* VBScript specific styles */
-.language-vbscript .hljs-keyword,
-.language-vbscript .hljs-built_in,
-.language-vbscript .hljs-title {
-    color: var(--code-keyword);
-}
-
-.language-vbscript .hljs-string,
-.language-vbscript .hljs-symbol,
-.language-vbscript .hljs-bullet,
-.language-vbscript .hljs-addition {
-    color: var(--code-string);
-}
-
-.language-vbscript .hljs-comment,
-.language-vbscript .hljs-quote,
-.language-vbscript .hljs-meta .hljs-comment {
-    color: var(--code-comment);
-}
-
-.language-vbscript .hljs-number,
-.language-vbscript .hljs-literal,
-.language-vbscript .hljs-deletion,
-.language-vbscript .hljs-regexp,
-.language-vbscript .hljs-built_in,
-.language-vbscript .hljs-meta .hljs-number {
-    color: var(--code-literal);
-}
-
-.language-vbscript .hljs-title.class_,
-.language-vbscript .hljs-title.class .hljs-identifier,
-.language-vbscript .hljs-attribute {
-    color: var(--code-namespace);
-}
-
-/* Override Highlight.js line numbers */
-.hljs-ln-numbers {
-    color: var(--text-secondary) !important;
 }
 
 /* Additional custom styles can be added below */
