@@ -212,7 +212,12 @@ func TriviaCommand(connection *ircevent.Connection, sender, target, message stri
 	bot.TriviaStateInstance.Answer = answer
 	bot.TriviaStateInstance.AnsweredBy = make(map[string]bool)
 
-	connection.Privmsg(target, question)
+	log.Printf("Sending trivia question to channel: %s", question)
+	if err := connection.Privmsg(target, question); err != nil {
+		log.Printf("Failed to send trivia question: %v", err)
+		bot.TriviaStateInstance.Active = false
+		return
+	}
 
 	// Start the trivia timer
 	go StartTriviaTimer(connection, target, answer)
@@ -235,12 +240,14 @@ func StartTriviaTimer(connection *ircevent.Connection, target string, answer str
 
 		if bot.TriviaStateInstance.Active {
 			bot.TriviaStateInstance.Active = false
-			connection.Privmsg(target, "Time's up! No one got the correct answer. The answer was: "+answer)
+			if err := connection.Privmsg(target, "Time's up! No one got the correct answer. The answer was: "+answer); err != nil {
+				log.Printf("Failed to send time's up message: %v", err)
+			}
 		}
 	}
 }
 
-// Trivia command to display user scores
+// ScoresCommand handles the !trivia-top command to display user scores
 func ScoresCommand(connection *ircevent.Connection, sender, target, message string, users map[string]bot.User) {
 	fmt.Println("Scores command triggered")
 
@@ -298,9 +305,9 @@ func ScoresCommand(connection *ircevent.Connection, sender, target, message stri
 	}
 
 	// Construct the message
-	message = fmt.Sprintf("Your score is %d and the Top5 is: %s", senderScore, top5Scores.String())
+	finalMessage := fmt.Sprintf("Your score is %d and the Top5 is: %s", senderScore, top5Scores.String())
 
-	connection.Privmsg(target, message)
+	connection.Privmsg(target, finalMessage)
 }
 
 // Helper function to extract nickname from the full hostname
