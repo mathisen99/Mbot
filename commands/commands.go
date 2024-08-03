@@ -13,6 +13,7 @@ func RegisterAllCommands() {
 	RegisterPersonalityCommands() // Personality commands (Used to set the bot's personality for a channel)
 	RegisterMemoryWipeCommand()   // MemoryWipe command (Used to wipe a user's memory)
 	RegisterYTCommand()           // YouTube search command
+	RegisterTriviaCommand()       // Trivia command
 }
 
 // GetDefaultPermissions returns the default command permissions for a given channel
@@ -21,6 +22,10 @@ func GetDefaultPermissions(channel string) map[string][]config.CommandPermission
 		// User management commands
 		"!adduser": {{Role: "Admin", Channels: []string{channel}}},
 		"!deluser": {{Role: "Admin", Channels: []string{channel}}},
+
+		// Trivia command
+		"!trivia":     {{Role: "Everyone", Channels: []string{channel}}},
+		"!trivia-top": {{Role: "Everyone", Channels: []string{channel}}},
 
 		// Personality and memory commands
 		"!personality": {{Role: "Admin", Channels: []string{channel}}},

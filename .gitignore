@@ -27,6 +27,8 @@ Thumbs.db
 # Data files
 /data/config.json
 /data/users.json
+/data/trivia_questions.json
+/data/trivia_scores.json
 command_permissions*
 
 # enviorment file
