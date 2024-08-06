@@ -60,7 +60,7 @@ func OpenAIRequest(message, imageURL, target string) (string, error) {
 	}
 
 	requestBody := OpenAIRequestBody{
-		Model:     "gpt-4o",
+		Model:     "gpt-4o-2024-08-06",
 		Messages:  messages,
 		MaxTokens: 300,
 	}

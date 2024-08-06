@@ -84,7 +84,7 @@ func NormalOpenAIRequest(connection *Connection, target, sender, message, person
 	conversationHistory = append(conversationHistory, systemMessage, userMessage)
 
 	req := openai.ChatCompletionRequest{
-		Model:     "gpt-4o",
+		Model:     "gpt-4o-2024-08-06",
 		MaxTokens: 4096,
 		Messages:  conversationHistory,
 		Functions: ai.GetTools(), // Include the tools in the request
