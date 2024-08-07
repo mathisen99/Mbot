@@ -38,14 +38,38 @@ func KBCommand(connection *ircevent.Connection, sender, target, message string, 
 	fmt.Println("Python script completed")         // Debug print
 	fmt.Println("Command output:", string(output)) // Debug print
 
-	// Split the output into lines and send each line separately to avoid message length issues
+	// Process the output to extract description and size
 	lines := strings.Split(string(output), "\n")
+	var description, size string
 	for _, line := range lines {
-		if strings.TrimSpace(line) != "" {
-			fmt.Println("Sending line:", line) // Debug print
-			connection.Privmsg(target, line)
+		if strings.HasPrefix(line, "Description: ") {
+			description = strings.TrimPrefix(line, "Description: ")
+		} else if strings.HasPrefix(line, "Size: ") {
+			size = strings.TrimPrefix(line, "Size: ")
 		}
 	}
+
+	if description == "" || size == "" {
+		connection.Privmsg(target, "No description or size found or failed to retrieve data.")
+		fmt.Println("Sent no data message") // Debug print
+		return
+	}
+
+	// Split the description into chunks of 450 characters
+	chunkSize := 450
+	for i := 0; i < len(description); i += chunkSize {
+		end := i + chunkSize
+		if end > len(description) {
+			end = len(description)
+		}
+		chunk := description[i:end]
+		connection.Privmsg(target, chunk)
+		fmt.Println("Sending description chunk:", chunk) // Debug print
+	}
+
+	// Send the size
+	connection.Privmsg(target, "Size: "+size)
+	fmt.Println("Sending size:", size) // Debug print
 }
 
 // RegisterKBCommand registers the !kb command
