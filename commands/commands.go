@@ -27,6 +27,9 @@ func GetDefaultPermissions(channel string) map[string][]config.CommandPermission
 		"!trivia":     {{Role: "Everyone", Channels: []string{channel}}},
 		"!trivia-top": {{Role: "Everyone", Channels: []string{channel}}},
 
+		// kb search command
+		"!kb": {{Role: "Everyone", Channels: []string{channel}}},
+
 		// Personality and memory commands
 		"!personality": {{Role: "Admin", Channels: []string{channel}}},
 		"!memory":      {{Role: "Everyone", Channels: []string{channel}}},
