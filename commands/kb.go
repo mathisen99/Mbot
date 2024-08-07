@@ -23,7 +23,7 @@ func KBCommand(connection *ircevent.Connection, sender, target, message string, 
 	fmt.Println("Fetching KB update information for:", kbNumber) // Debug print
 
 	// Command execution
-	cmd := exec.Command("python3", "./kb/main.py", kbNumber)
+	cmd := exec.Command("python", "./kb/main.py", kbNumber)
 	output, err := cmd.CombinedOutput()
 
 	if err != nil {
@@ -33,7 +33,14 @@ func KBCommand(connection *ircevent.Connection, sender, target, message string, 
 	}
 
 	fmt.Println("Command output:", string(output)) // Debug print
-	connection.Privmsg(target, string(output))
+
+	// Split the output into lines and send each line separately to avoid message length issues
+	lines := strings.Split(string(output), "\n")
+	for _, line := range lines {
+		if strings.TrimSpace(line) != "" {
+			connection.Privmsg(target, line)
+		}
+	}
 }
 
 // RegisterKBCommand registers the !kb command
