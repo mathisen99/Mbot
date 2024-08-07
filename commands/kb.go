@@ -24,7 +24,7 @@ func KBCommand(connection *ircevent.Connection, sender, target, message string, 
 	fmt.Println("Fetching KB update information for:", kbNumber) // Debug print
 
 	// Command execution
-	connection.Privmsg(target, "Fetching KB update information...")
+	connection.Privmsg(target, "Scrapping KB update information from Microsoft...")
 	cmd := exec.Command("python3", "./kb/main.py", kbNumber)
 	fmt.Println("Running Python script...") // Debug print
 	output, err := cmd.CombinedOutput()
