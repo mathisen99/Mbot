@@ -14,6 +14,7 @@ func RegisterAllCommands() {
 	RegisterMemoryWipeCommand()   // MemoryWipe command (Used to wipe a user's memory)
 	RegisterYTCommand()           // YouTube search command
 	RegisterTriviaCommand()       // Trivia command
+	RegisterKBCommand()           // KB search command
 }
 
 // GetDefaultPermissions returns the default command permissions for a given channel
