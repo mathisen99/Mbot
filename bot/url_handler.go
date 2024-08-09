@@ -142,7 +142,7 @@ func HandleVirusTotalLink(connection *Connection, sender, target, url string) {
 			// show just part of the url to avoid people clicking on it
 			url = url_features.ShortenURL(url)
 
-			connection.Privmsg(target, fmt.Sprintf("⚠️ %s just pasted a link that triggered my automatic defense systems ☢️  %s Here is a VirusTotal report: %s Note: low malicious score may be false positive", nick, url, reportMessage))
+			connection.Privmsg(target, fmt.Sprintf("⚠️ %s just pasted a link that triggered my automatic defense systems ☢️ %s [Full url hidden] ☢️ Here is a VirusTotal report: %s Note: low malicious score may be false positive", nick, url, reportMessage))
 		} else {
 			color.Green(">> URL is safe: %s", url)
 		}

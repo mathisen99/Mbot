@@ -158,7 +158,7 @@ func ShortenURL(input string) string {
 	host := parsedURL.Host
 
 	// Construct a shortened URL with just the scheme and the first few characters of the host
-	shortened := scheme + "://" + host[:5] + "..."
+	shortened := scheme + "://" + host[:6] + "..."
 
 	return shortened
 }
