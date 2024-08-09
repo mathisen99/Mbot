@@ -146,3 +146,19 @@ func getVirusTotalReport(id string, apiKey string) (map[string]int, error) {
 
 	return response.Data.Attributes.Stats, nil
 }
+
+func ShortenURL(input string) string {
+	parsedURL, err := url.Parse(input)
+	if err != nil {
+		return "malformed URL"
+	}
+
+	// Get the scheme (http, https) and host (domain) of the URL
+	scheme := parsedURL.Scheme
+	host := parsedURL.Host
+
+	// Construct a shortened URL with just the scheme and the first few characters of the host
+	shortened := scheme + "://" + host[:5] + "..."
+
+	return shortened
+}
