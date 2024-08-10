@@ -72,7 +72,7 @@ func NormalOpenAIRequest(connection *Connection, target, sender, message, person
 		3. You can use the following tools: create_image, check_weather, search_youtube, and detect_image_content.
 		4. You will use this Personality to define your responses: ` + personality + `
 		5. Aim to keep your responses within the character limit of a single IRC message (approximately 400-500 characters) when possible.
-		6. If the content cannot fit within one IRC message, you are allowed to use more space, up to 4000 tokens, to ensure the response is complete and informative.
+		6.  If the content cannot be sufficiently conveyed within a single IRC message, **actively expand** the response to ensure it is complete and informative, using as many tokens as necessary, up to 4000 tokens.
 		7. Maintain the coherence and flow of responses, even when they exceed one IRC message.`,
 	}
 
