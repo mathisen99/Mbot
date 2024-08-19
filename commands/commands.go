@@ -15,6 +15,7 @@ func RegisterAllCommands() {
 	RegisterYTCommand()           // YouTube search command
 	RegisterTriviaCommand()       // Trivia command
 	RegisterKBCommand()           // KB search command
+	RegisterClaudeCommand()       // Claude command (Anthropic API)
 }
 
 // GetDefaultPermissions returns the default command permissions for a given channel
@@ -23,6 +24,9 @@ func GetDefaultPermissions(channel string) map[string][]config.CommandPermission
 		// User management commands
 		"!adduser": {{Role: "Admin", Channels: []string{channel}}},
 		"!deluser": {{Role: "Admin", Channels: []string{channel}}},
+
+		// Claude command
+		"!claude": {{Role: "Everyone", Channels: []string{channel}}},
 
 		// Trivia command
 		"!trivia":     {{Role: "Everyone", Channels: []string{channel}}},

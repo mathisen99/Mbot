@@ -9,6 +9,7 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
+	github.com/liushuangls/go-anthropic/v2 v2.6.0
 	github.com/sashabaranov/go-openai v1.26.3
 	github.com/yuin/goldmark v1.7.4
 	golang.org/x/time v0.5.0
