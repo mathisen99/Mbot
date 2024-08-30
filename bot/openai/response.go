@@ -60,6 +60,12 @@ func ProcessResponse(ctx context.Context, client *openai.Client, resp *openai.Ch
 			if err != nil {
 				return "", fmt.Errorf("error searching YouTube: %v", err)
 			}
+		case "summarize_webpage":
+			url := functionArgs["url"]
+			functionResponse, err = summarizeWebpage(url)
+			if err != nil {
+				return "", fmt.Errorf("error summarizing webpage: %v", err)
+			}
 		default:
 			functionResponse = "Unknown function call"
 		}

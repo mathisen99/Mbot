@@ -3,6 +3,7 @@ module mbot
 go 1.22.5
 
 require (
+	github.com/PuerkitoBio/goquery v1.9.2
 	github.com/chromedp/chromedp v0.9.5
 	github.com/ergochat/irc-go v0.4.0
 	github.com/fatih/color v1.17.0
@@ -16,6 +17,7 @@ require (
 )
 
 require (
+	github.com/andybalholm/cascadia v1.3.2 // indirect
 	github.com/bytedance/sonic v1.11.6 // indirect
 	github.com/bytedance/sonic/loader v0.1.1 // indirect
 	github.com/chromedp/cdproto v0.0.0-20240202021202-6d0b6a386732 // indirect

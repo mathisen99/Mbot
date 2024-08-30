@@ -77,11 +77,31 @@ func DefineSearchYouTubeFunction() *openai.FunctionDefinition {
 	}
 }
 
+// DefineSummarizeWebpageFunction defines the function for summarizing a webpage.
+func DefineSummarizeWebpageFunction() *openai.FunctionDefinition {
+	return &openai.FunctionDefinition{
+		Name:        "summarize_webpage",
+		Description: "Summarizes the content of the provided webpage URL",
+		Parameters: jsonschema.Definition{
+			Type: jsonschema.Object,
+			Properties: map[string]jsonschema.Definition{
+				"url": {
+					Type:        jsonschema.String,
+					Description: "The URL of the webpage to summarize",
+				},
+			},
+			Required: []string{"url"},
+		},
+	}
+}
+
 // GetTools returns a list of available tools for function calling.
 func GetTools() []openai.FunctionDefinition {
 	return []openai.FunctionDefinition{
 		*DefineDetectImageContentFunction(),
 		*DefineCreateImageFunction(),
 		*DefineCheckWeatherFunction(),
+		*DefineSearchYouTubeFunction(),
+		*DefineSummarizeWebpageFunction(), // Added the new summarize_webpage function
 	}
 }
