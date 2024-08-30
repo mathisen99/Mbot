@@ -33,7 +33,7 @@ func ClaudeCommand(connection *ircevent.Connection, sender, target, message stri
 		Messages: []anthropic.Message{
 			anthropic.NewUserTextMessage(question),
 		},
-		MaxTokens: 1000,
+		MaxTokens: 4000,
 	})
 
 	if err != nil {

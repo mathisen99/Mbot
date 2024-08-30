@@ -37,7 +37,7 @@ func detectImageContent(message, imageURL string) (string, error) {
 	requestBody := OpenAIRequestBody{
 		Model:     "gpt-4o-2024-08-06",
 		Messages:  messages,
-		MaxTokens: 300,
+		MaxTokens: 4000,
 	}
 
 	requestBodyJSON, err := json.Marshal(requestBody)

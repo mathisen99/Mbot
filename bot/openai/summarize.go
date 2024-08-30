@@ -65,7 +65,7 @@ func summarizeWebpage(url string) (string, error) {
 	// Prepare the OpenAI API request
 	req := openai.ChatCompletionRequest{
 		Model:     "gpt-4o-2024-08-06",
-		MaxTokens: 3000, // Adjust based on the desired summary length
+		MaxTokens: 4000, // Adjust based on the desired summary length
 		Messages:  []openai.ChatCompletionMessage{systemMessage, userMessage},
 	}
 
