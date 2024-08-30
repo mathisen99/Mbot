@@ -1,14 +1,14 @@
-/* Cyberpunk / Dark Anime color palette */
+/* Updated Dark Theme color palette */
 :root {
-    --main-bg: #0d0d0d; /* Darker body background */
-    --container-bg: #121212; /* Darker container background */
-    --accent: #ff4081; /* Neon pink for important elements and accents */
-    --secondary-accent: #7c4dff; /* Neon purple for additional accents */
-    --text-primary: #ffffff; /* Bright white for primary text */
-    --text-secondary: #b0bec5; /* Light gray for secondary text */
-    --border-color: #37474f; /* Subdued color for borders */
-    --code-bg: #1a1a1a; /* Very dark background for code blocks */
-    --link-hover: #69f0ae; /* Neon green for links and interactive elements */
+    --main-bg: #1e1e1e; /* Darker body background */
+    --container-bg: #2b2b2b; /* Darker container background */
+    --accent: #7e9aa8; /* Subtle blue-gray for important elements and accents */
+    --secondary-accent: #a3b4c6; /* Softer blue-gray for additional accents */
+    --text-primary: #f1f1f1; /* Light gray for primary text */
+    --text-secondary: #b5b5b5; /* Medium gray for secondary text */
+    --border-color: #3a3a3a; /* Subtle border color */
+    --code-bg: #2a2a2a; /* Slightly lighter dark background for code blocks */
+    --link-hover: #88c0d0; /* Muted cyan for links and interactive elements */
 }
 
 body {
@@ -38,20 +38,20 @@ header {
 
 h1 {
     font-size: 2em; /* Ensures visibility */
-    color: var(--accent); /* Neon effect for the text */
-    text-shadow: 0 0 10px var(--accent), 0 0 20px var (--accent); /* Glow effect for visibility */
+    color: var(--accent); /* Subtle blue-gray effect for the text */
+    text-shadow: none; /* Removed glow effect for a more subdued look */
 }
 
 .container {
     margin-top: 60px; /* Adjust this value based on the actual height of your header */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     border-radius: 5px;
     padding: 20px;
     width: 90%;
     max-width: 90%;
     max-height: 80vh;
     overflow: auto;
-    background-color: rgba(18, 18, 18, 0.9);
+    background-color: rgba(43, 43, 43, 0.9);
     border: 1px solid var(--border-color);
     margin-bottom: 20px;
     color: var(--text-primary);
@@ -86,7 +86,7 @@ a:hover {
     text-decoration: underline;
 }
 
-/* Enhanced styles for code blocks to fit the cyberpunk theme */
+/* Enhanced styles for code blocks to fit the updated dark theme */
 pre code {
     background-color: var(--code-bg) !important;
     color: var(--text-secondary);
@@ -94,15 +94,13 @@ pre code {
     border-radius: 5px;
     overflow-x: auto;
     white-space: pre-wrap;
-    border: 1px solid var(--secondary-accent);
+    border: 1px solid var(--border-color);
 }
 
-/* Neon accents for inline code to pop out */
+/* Subtle accents for inline code to match the muted theme */
 :not(pre) > code {
     background: var(--border-color);
     color: var(--accent);
     padding: .2em .4em;
     border-radius: 3px;
 }
-
-/* Additional custom styles can be added below */
